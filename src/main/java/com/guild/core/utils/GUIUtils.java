@@ -1,13 +1,14 @@
 package com.guild.core.utils;
 
-import com.guild.GuildPlugin;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import org.bukkit.entity.Player;
+
+import com.guild.GuildPlugin;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * GUI工具类 - 统一处理GUI中的变量替换和颜色代码

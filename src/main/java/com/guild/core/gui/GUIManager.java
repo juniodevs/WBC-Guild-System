@@ -1,7 +1,11 @@
 package com.guild.core.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.gui.GuildNameInputGUI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,13 +15,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
-import java.util.function.Function;
-
+import com.guild.GuildPlugin;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.GuildNameInputGUI;
 
 /**
  * GUI管理器 - 管理所有GUI界面

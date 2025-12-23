@@ -1,9 +1,10 @@
 package com.guild.listeners;
 
-import com.guild.GuildPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
+
+import com.guild.GuildPlugin;
 
 /**
  * Listener de eventos da guilda

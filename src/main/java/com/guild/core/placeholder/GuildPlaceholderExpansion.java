@@ -1,16 +1,18 @@
 package com.guild.core.placeholder;
 
+import java.util.concurrent.CompletableFuture;
+
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
 import com.guild.GuildPlugin;
+import com.guild.core.time.TimeProvider;
+import com.guild.core.utils.PlaceholderUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.services.GuildService;
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import com.guild.core.utils.PlaceholderUtils;
 
-import com.guild.core.time.TimeProvider;
-import java.util.concurrent.CompletableFuture;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 /**
  * Guild插件 PlaceholderAPI 扩展

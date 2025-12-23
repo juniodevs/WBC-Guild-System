@@ -1,14 +1,13 @@
 package com.guild.listeners;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUIManager;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUIManager;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
