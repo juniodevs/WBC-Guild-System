@@ -12,10 +12,6 @@ import com.guild.core.utils.PlaceholderUtils;
 import com.guild.core.time.TimeProvider;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Guild插件 PlaceholderAPI 扩展
- * 提供完整的工会数据变量支持
- */
 public class GuildPlaceholderExpansion extends PlaceholderExpansion {
     
     private final GuildPlugin plugin;
@@ -59,7 +55,6 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
         
         try {
             switch (args[0].toLowerCase()) {
-                // 基础工会信息
                 case "name":
                     return getGuildName(player);
                 case "tag":
@@ -77,7 +72,6 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
                 case "frozen":
                     return getGuildFrozenStatus(player);
                 
-                // 玩家在工会中的信息
                 case "role":
                     return getPlayerRoleColored(player);
                 case "roleraw":
@@ -91,7 +85,6 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
                 case "joined":
                     return getPlayerJoinedTime(player);
                 
-                // 工会状态检查
                 case "hasguild":
                     return hasGuild(player);
                 case "isleader":
@@ -101,7 +94,6 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
                 case "ismember":
                     return isMember(player);
                 
-                // 工会权限
                 case "caninvite":
                     return canInvite(player);
                 case "cankick":
@@ -115,12 +107,10 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
                     return "";
             }
         } catch (Exception e) {
-            plugin.getLogger().warning("处理占位符时发生错误: " + e.getMessage());
+            plugin.getLogger().warning("Erro ao processar placeholder: " + e.getMessage());
             return "";
         }
     }
-    
-    // ==================== 基础工会信息 ====================
     
     private String getGuildName(Player player) {
         try {
@@ -198,8 +188,6 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
         }
     }
     
-    // ==================== 玩家在工会中的信息 ====================
-    
     private String getPlayerRoleRaw(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
@@ -250,87 +238,83 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
     }
     
 
-    // ==================== 工会状态检查 ====================
-    
     private String hasGuild(Player player) {
         try {
             Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-            return guild != null ? "是" : "否";
+            return guild != null ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
     
     private String isLeader(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            return member != null && member.getRole() == GuildMember.Role.LEADER ? "是" : "否";
+            return member != null && member.getRole() == GuildMember.Role.LEADER ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
     
     private String isOfficer(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            return member != null && member.getRole() == GuildMember.Role.OFFICER ? "是" : "否";
+            return member != null && member.getRole() == GuildMember.Role.OFFICER ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
     
     private String isMember(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            return member != null ? "是" : "否";
+            return member != null ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
-    
-    // ==================== 工会权限 ====================
     
     private String canInvite(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
+            if (member == null) return "Não";
             
-            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "是" : "否";
+            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
     
     private String canKick(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
+            if (member == null) return "Não";
             
-            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "是" : "否";
+            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
     
     private String canPromote(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
+            if (member == null) return "Não";
             
-            return member.getRole() == GuildMember.Role.LEADER ? "是" : "否";
+            return member.getRole() == GuildMember.Role.LEADER ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
     
     private String canDemote(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
+            if (member == null) return "Não";
             
-            return member.getRole() == GuildMember.Role.LEADER ? "是" : "否";
+            return member.getRole() == GuildMember.Role.LEADER ? "Sim" : "Não";
         } catch (Exception e) {
-            return "否";
+            return "Não";
         }
     }
     

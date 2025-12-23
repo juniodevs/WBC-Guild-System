@@ -12,15 +12,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-/**
- * 权限管理器 - 提供插件独立的权限功能
- */
 public class PermissionManager {
     
     private final GuildPlugin plugin;
     private final Logger logger;
     private final Map<UUID, PlayerPermissions> playerPermissions = new HashMap<>();
-    // 配置驱动的角色权限矩阵
+    
     private RolePermissions defaultPermissions;
     private RolePermissions memberPermissions;
     private RolePermissions officerPermissions;
@@ -32,36 +29,26 @@ public class PermissionManager {
         reloadFromConfig();
     }
     
-    /**
-     * 检查玩家是否有指定权限
-     */
     public boolean hasPermission(Player player, String permission) {
         if (player == null || permission == null) {
             return false;
         }
         
-        // 首先检查Bukkit权限系统
         if (player.hasPermission(permission)) {
             return true;
         }
         
-        // 检查插件内置权限
         return hasInternalPermission(player, permission);
     }
     
-    /**
-     * 检查插件内置权限
-     */
     private boolean hasInternalPermission(Player player, String permission) {
         UUID playerUuid = player.getUniqueId();
         
-        // 获取玩家权限
         PlayerPermissions permissions = getPlayerPermissions(playerUuid);
         
-        // 检查具体权限
         switch (permission) {
             case "guild.use":
-                return true; // 所有玩家都可以使用工会系统
+                return true; 
                 
             case "guild.create":
                 return permissions.canCreateGuild();
@@ -89,9 +76,6 @@ public class PermissionManager {
         }
     }
     
-    /**
-     * 获取玩家权限
-     */
     private PlayerPermissions getPlayerPermissions(UUID playerUuid) {
         return playerPermissions.computeIfAbsent(playerUuid, uuid -> {
             PlayerPermissions resolved = new PlayerPermissions();
@@ -113,7 +97,7 @@ public class PermissionManager {
             resolved.setCanDeleteGuild(rp.canDelete);
             resolved.setCanPromoteMembers(rp.canPromote);
             resolved.setCanDemoteMembers(rp.canDemote);
-            // isAdmin 仍由 Bukkit 权限系统控制
+            
             return resolved;
         });
     }
@@ -133,18 +117,12 @@ public class PermissionManager {
         }
     }
     
-    /**
-     * 更新玩家权限（当工会状态改变时调用）
-     */
     public void updatePlayerPermissions(UUID playerUuid) {
         playerPermissions.remove(playerUuid);
-        // 重新计算权限
+        
         getPlayerPermissions(playerUuid);
     }
 
-    /**
-     * 从配置重载权限矩阵，并清空缓存
-     */
     public void reloadFromConfig() {
         FileConfiguration cfg = plugin.getConfigManager().getMainConfig();
         this.defaultPermissions = readRolePermissions(cfg, "permissions.default",
@@ -153,7 +131,7 @@ public class PermissionManager {
                 new RolePermissions(true, false, false, false, false, false));
         this.officerPermissions = readRolePermissions(cfg, "permissions.officer",
                 new RolePermissions(true, true, true, false, false, false));
-        // leader 未配置时，采用全开作为回退
+        
         RolePermissions leaderFallback = new RolePermissions(true, true, true, true, true, true);
         this.leaderPermissions = readRolePermissions(cfg, "permissions.leader", leaderFallback);
         playerPermissions.clear();
@@ -171,15 +149,11 @@ public class PermissionManager {
         return new RolePermissions(canCreate, canInvite, canKick, canPromote, canDemote, canDelete);
     }
     
-    /**
-     * 检查玩家是否可以邀请成员
-     */
     public boolean canInviteMembers(Player player) {
         if (!hasPermission(player, "guild.invite")) {
             return false;
         }
         
-        // 检查玩家是否在工会中
         GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
         if (guildService == null) {
             return false;
@@ -193,15 +167,11 @@ public class PermissionManager {
         return getPlayerPermissions(player.getUniqueId()).canInviteMembers();
     }
     
-    /**
-     * 检查玩家是否可以踢出成员
-     */
     public boolean canKickMembers(Player player) {
         if (!hasPermission(player, "guild.kick")) {
             return false;
         }
         
-        // 检查玩家是否在工会中
         GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
         if (guildService == null) {
             return false;
@@ -215,15 +185,11 @@ public class PermissionManager {
         return getPlayerPermissions(player.getUniqueId()).canKickMembers();
     }
     
-    /**
-     * 检查玩家是否可以删除工会
-     */
     public boolean canDeleteGuild(Player player) {
         if (!hasPermission(player, "guild.delete")) {
             return false;
         }
         
-        // 检查玩家是否在工会中
         GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
         if (guildService == null) {
             return false;
@@ -237,15 +203,11 @@ public class PermissionManager {
         return getPlayerPermissions(player.getUniqueId()).canDeleteGuild();
     }
     
-    /**
-     * 检查玩家是否可以创建工会
-     */
     public boolean canCreateGuild(Player player) {
         if (!hasPermission(player, "guild.create")) {
             return false;
         }
         
-        // 检查玩家是否已有工会
         GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
         if (guildService == null) {
             return false;
@@ -254,9 +216,6 @@ public class PermissionManager {
         return guildService.getPlayerGuild(player.getUniqueId()) == null;
     }
     
-    /**
-     * 玩家权限类
-     */
     private static class PlayerPermissions {
         private boolean canCreateGuild = false;
         private boolean canInviteMembers = false;
@@ -266,7 +225,6 @@ public class PermissionManager {
         private boolean canDemoteMembers = false;
         private boolean isAdmin = false;
         
-        // Getters and Setters
         public boolean canCreateGuild() { return canCreateGuild; }
         public void setCanCreateGuild(boolean canCreateGuild) { this.canCreateGuild = canCreateGuild; }
         
@@ -289,7 +247,6 @@ public class PermissionManager {
         public void setAdmin(boolean admin) { isAdmin = admin; }
     }
 
-    // 角色权限矩阵（配置驱动）
     private static class RolePermissions {
         final boolean canCreate;
         final boolean canInvite;
