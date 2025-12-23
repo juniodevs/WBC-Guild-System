@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会关系GUI - 管理工会关系
+ * GUI de Relações da Guilda - Gerenciar relações da guilda
  */
 public class GuildRelationsGUI implements GUI {
     
@@ -30,7 +30,7 @@ public class GuildRelationsGUI implements GUI {
     private final Guild guild;
     private final Player player;
     private int currentPage = 0;
-    private final int itemsPerPage = 28; // 每页显示28个关系 (7列 × 4行)
+    private final int itemsPerPage = 28; // 28 relações por página (7 colunas x 4 linhas)
     private List<GuildRelation> relations = new ArrayList<>();
     
     public GuildRelationsGUI(GuildPlugin plugin, Guild guild, Player player) {
@@ -51,22 +51,22 @@ public class GuildRelationsGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preenche a borda
         fillBorder(inventory);
         
-        // 加载关系数据
+        // Carrega dados de relações
         loadRelations().thenAccept(relationsList -> {
             this.relations = relationsList;
             
-            // 确保在主线程中执行GUI操作
+            // Garante execução de operações de GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
-                // 显示关系列表
+                // Mostra lista de relações
                 displayRelations(inventory);
                 
-                // 添加功能按钮
+                // Adiciona botões de função
                 addFunctionButtons(inventory);
                 
-                // 添加分页按钮
+                // Adiciona botões de paginação
                 addPaginationButtons(inventory);
             });
         });
@@ -78,20 +78,20 @@ public class GuildRelationsGUI implements GUI {
         
         String itemName = clickedItem.getItemMeta().getDisplayName();
         
-        // 返回按钮
+        // Botão de voltar
         if (itemName.contains("Voltar")) {
             MainGuildGUI mainGUI = new MainGuildGUI(plugin);
             plugin.getGuiManager().openGUI(player, mainGUI);
             return;
         }
         
-        // 创建关系按钮
+        // Botão de criar relação
         if (itemName.contains("Criar Relação")) {
             openCreateRelationGUI(player);
             return;
         }
         
-        // 分页按钮
+        // Botões de paginação
         if (itemName.contains("Página Anterior")) {
             if (currentPage > 0) {
                 currentPage--;
@@ -109,7 +109,7 @@ public class GuildRelationsGUI implements GUI {
             return;
         }
         
-        // 关系项目点击 - 检查是否在2-8列，2-5行范围内
+        // Clique em item de relação - Verifica se está no intervalo de colunas 2-8, linhas 2-5
         if (slot >= 10 && slot <= 43) {
             int row = slot / 9;
             int col = slot % 9;
@@ -125,14 +125,14 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 加载工会关系数据
+     * Carrega dados de relações da guilda
      */
     private CompletableFuture<List<GuildRelation>> loadRelations() {
         return plugin.getGuildService().getGuildRelationsAsync(guild.getId());
     }
     
     /**
-     * 显示关系列表
+     * Mostra lista de relações
      */
     private void displayRelations(Inventory inventory) {
         int startIndex = currentPage * itemsPerPage;
@@ -142,9 +142,9 @@ public class GuildRelationsGUI implements GUI {
             GuildRelation relation = relations.get(i);
             int relativeIndex = i - startIndex;
             
-            // 计算在2-8列，2-5行的位置 (slots 10-43)
-            int row = (relativeIndex / 7) + 1; // 2-5行
-            int col = (relativeIndex % 7) + 1; // 2-8列
+            // Calcula posição nas colunas 2-8, linhas 2-5 (slots 10-43)
+            int row = (relativeIndex / 7) + 1; // Linhas 2-5
+            int col = (relativeIndex % 7) + 1; // Colunas 2-8
             int slot = row * 9 + col;
             
             ItemStack relationItem = createRelationItem(relation);
@@ -153,7 +153,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 创建关系显示物品
+     * Cria item de exibição de relação
      */
     private ItemStack createRelationItem(GuildRelation relation) {
         String otherGuildName = relation.getOtherGuildName(guild.getId());
@@ -176,7 +176,7 @@ public class GuildRelationsGUI implements GUI {
         
         lore.add("");
         
-        // 根据关系类型和状态添加操作提示
+        // Adiciona dicas de operação com base no tipo e status da relação
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
                 lore.add(ColorUtils.colorize("&cBotão Direito: Cancelar Relação"));
@@ -198,7 +198,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 获取关系类型对应的材料
+     * Obtém material correspondente ao tipo de relação
      */
     private Material getRelationMaterial(GuildRelation.RelationType type) {
         switch (type) {
@@ -212,7 +212,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 获取状态颜色
+     * Obtém cor do status
      */
     private String getStatusColor(GuildRelation.RelationStatus status) {
         switch (status) {
@@ -225,7 +225,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 格式化日期时间
+     * Formata data e hora
      */
     private String formatDateTime(java.time.LocalDateTime dateTime) {
         if (dateTime == null) return "Desconhecido";
@@ -233,10 +233,10 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 添加功能按钮
+     * Adiciona botões de função
      */
     private void addFunctionButtons(Inventory inventory) {
-        // 创建关系按钮
+        // Botão de criar relação
         ItemStack createRelation = createItem(
             Material.EMERALD,
             ColorUtils.colorize("&aCriar Relação"),
@@ -245,7 +245,7 @@ public class GuildRelationsGUI implements GUI {
         );
         inventory.setItem(45, createRelation);
         
-        // 关系统计按钮
+        // Botão de estatísticas de relações
         ItemStack statistics = createItem(
             Material.BOOK,
             ColorUtils.colorize("&eEstatísticas de Relações"),
@@ -256,12 +256,12 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 添加分页按钮
+     * Adiciona botões de paginação
      */
     private void addPaginationButtons(Inventory inventory) {
         int maxPage = (relations.size() - 1) / itemsPerPage;
         
-        // 上一页按钮
+        // Botão de página anterior
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
@@ -271,7 +271,7 @@ public class GuildRelationsGUI implements GUI {
             inventory.setItem(45, previousPage);
         }
         
-        // 下一页按钮
+        // Botão de próxima página
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
@@ -281,7 +281,7 @@ public class GuildRelationsGUI implements GUI {
             inventory.setItem(53, nextPage);
         }
         
-        // 返回按钮
+        // Botão de voltar
         ItemStack backButton = createItem(
             Material.BARRIER,
             ColorUtils.colorize("&cVoltar"),
@@ -289,7 +289,7 @@ public class GuildRelationsGUI implements GUI {
         );
         inventory.setItem(49, backButton);
         
-        // 页码显示
+        // Exibição de número da página
         ItemStack pageInfo = createItem(
             Material.PAPER,
             ColorUtils.colorize("&ePág " + (currentPage + 1)),
@@ -300,7 +300,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 处理关系点击
+     * Processa clique em relação
      */
     private void handleRelationClick(Player player, GuildRelation relation, ClickType clickType) {
         GuildRelation.RelationStatus status = relation.getStatus();
@@ -308,12 +308,12 @@ public class GuildRelationsGUI implements GUI {
         
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
-                // 发起人取消关系
+                // Iniciador cancela relação
                 if (clickType == ClickType.RIGHT) {
                     cancelRelation(player, relation);
                 }
             } else {
-                // 对方处理关系
+                // Outra parte processa relação
                 if (clickType == ClickType.LEFT) {
                     acceptRelation(player, relation);
                 } else if (clickType == ClickType.RIGHT) {
@@ -338,7 +338,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 接受关系
+     * Aceita relação
      */
     private void acceptRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.ACTIVE)
@@ -358,7 +358,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 拒绝关系
+     * Rejeita relação
      */
     private void rejectRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
@@ -378,7 +378,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 取消关系
+     * Cancela relação
      */
     private void cancelRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
@@ -398,10 +398,10 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 结束停战
+     * Termina trégua
      */
     private void endTruce(Player player, GuildRelation relation) {
-        // 结束停战，改为中立关系
+        // Termina trégua, muda para relação neutra
         GuildRelation newRelation = new GuildRelation(
             relation.getGuild1Id(), relation.getGuild2Id(),
             relation.getGuild1Name(), relation.getGuild2Name(),
@@ -415,7 +415,7 @@ public class GuildRelationsGUI implements GUI {
         ).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    // 删除旧的停战关系
+                    // Remove relação de trégua antiga
                     plugin.getGuildService().deleteGuildRelationAsync(relation.getId());
                     
                     String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-end", "&aTrégua com {guild} terminou, relação agora é neutra!");
@@ -431,10 +431,10 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 提议停战
+     * Propõe trégua
      */
     private void proposeTruce(Player player, GuildRelation relation) {
-        // 创建停战提议
+        // Cria proposta de trégua
         GuildRelation truceRelation = new GuildRelation(
             relation.getGuild1Id(), relation.getGuild2Id(),
             relation.getGuild1Name(), relation.getGuild2Name(),
@@ -461,7 +461,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 删除关系
+     * Exclui relação
      */
     private void deleteRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId())
@@ -481,7 +481,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 打开创建关系GUI
+     * Abre GUI de criação de relação
      */
     private void openCreateRelationGUI(Player player) {
         CreateRelationGUI createRelationGUI = new CreateRelationGUI(plugin, guild, player);
@@ -489,7 +489,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 刷新库存
+     * Atualiza inventário
      */
     private void refreshInventory(Player player) {
         if (player.isOnline()) {
@@ -498,7 +498,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 填充边框
+     * Preenche a borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -513,7 +513,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Cria item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

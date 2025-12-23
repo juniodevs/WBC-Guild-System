@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会标签输入GUI
+ * GUI de Entrada de Tag da Guilda
  */
 public class GuildTagInputGUI implements GUI {
     
@@ -41,33 +41,33 @@ public class GuildTagInputGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preenche a borda
         fillBorder(inventory);
         
-        // 显示当前标签
+        // Mostra tag atual
         displayCurrentTag(inventory);
         
-        // 添加操作按钮
+        // Adiciona botões de ação
         setupButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 11: // 输入标签
+            case 11: // Inserir tag
                 handleInputTag(player);
                 break;
-            case 15: // 确认
+            case 15: // Confirmar
                 handleConfirm(player);
                 break;
-            case 13: // 取消
+            case 13: // Cancelar
                 handleCancel(player);
                 break;
         }
     }
     
     /**
-     * 填充边框
+     * Preenche a borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -82,7 +82,7 @@ public class GuildTagInputGUI implements GUI {
     }
     
     /**
-     * 显示当前标签
+     * Mostra tag atual
      */
     private void displayCurrentTag(Inventory inventory) {
         ItemStack currentTagItem = createItem(
@@ -94,10 +94,10 @@ public class GuildTagInputGUI implements GUI {
     }
     
     /**
-     * 设置按钮
+     * Configura botões
      */
     private void setupButtons(Inventory inventory) {
-        // 确认按钮
+        // Botão de confirmar
         ItemStack confirm = createItem(
             Material.EMERALD_BLOCK,
             ColorUtils.colorize("&aConfirmar Modificação"),
@@ -105,7 +105,7 @@ public class GuildTagInputGUI implements GUI {
         );
         inventory.setItem(15, confirm);
         
-        // 取消按钮
+        // Botão de cancelar
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
             ColorUtils.colorize("&cCancelar"),
@@ -115,17 +115,17 @@ public class GuildTagInputGUI implements GUI {
     }
     
     /**
-     * 处理输入标签
+     * Processa entrada de tag
      */
     private void handleInputTag(Player player) {
-        // 关闭GUI
+        // Fecha GUI
         player.closeInventory();
         
-        // 发送消息提示输入
+        // Envia mensagem solicitando entrada
         String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-tag", "&aPor favor, digite a nova tag da guilda no chat (máximo 10 caracteres):");
         player.sendMessage(ColorUtils.colorize(message));
         
-        // 设置玩家为输入模式
+        // Define jogador em modo de entrada
         plugin.getGuiManager().setInputMode(player, input -> {
             if (input.length() > 10) {
                 String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.tag-too-long", "&cTag muito longa, máximo 10 caracteres!");
@@ -133,16 +133,16 @@ public class GuildTagInputGUI implements GUI {
                 return false;
             }
             
-            // 更新标签
+            // Atualiza tag
             currentTag = input;
             
-            // 保存到数据库
+            // Salva no banco de dados
             plugin.getGuildService().updateGuildAsync(guild.getId(), guild.getName(), input, guild.getDescription(), player.getUniqueId()).thenAccept(success -> {
                 if (success) {
                     String successMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.tag-updated", "&aTag da guilda atualizada!");
                     player.sendMessage(ColorUtils.colorize(successMessage));
                     
-                    // 安全刷新GUI
+                    // Atualiza GUI com segurança
                     plugin.getGuiManager().refreshGUI(player);
                 } else {
                     String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.tag-update-failed", "&cFalha ao atualizar tag da guilda!");
@@ -155,23 +155,23 @@ public class GuildTagInputGUI implements GUI {
     }
     
     /**
-     * 处理确认
+     * Processa confirmação
      */
     private void handleConfirm(Player player) {
-        // 返回工会设置GUI
+        // Retorna para GUI de configurações da guilda
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
     }
     
     /**
-     * 处理取消
+     * Processa cancelamento
      */
     private void handleCancel(Player player) {
-        // 返回工会设置GUI
+        // Retorna para GUI de configurações da guilda
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
     }
     
     /**
-     * 创建物品
+     * Cria item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

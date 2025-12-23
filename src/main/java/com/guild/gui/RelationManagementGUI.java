@@ -21,26 +21,26 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 关系管理GUI - 管理员专用
+ * GUI de Gerenciamento de Relações - Apenas para Administradores
  */
 public class RelationManagementGUI implements GUI {
     
     private final GuildPlugin plugin;
     private final Player player;
     private int currentPage = 0;
-    private final int itemsPerPage = 28; // 7列 × 4行
+    private final int itemsPerPage = 28; // 7 colunas × 4 linhas
     private List<GuildRelation> allRelations = new ArrayList<>();
     private boolean isLoading = false;
     
-    // 确认删除机制
+    // Mecanismo de confirmação de exclusão
     private static final Map<UUID, GuildRelation> pendingDeletions = new HashMap<>();
     private static final Map<UUID, Long> deletionTimers = new HashMap<>();
-    private static final long CONFIRMATION_TIMEOUT = 10000; // 10秒确认超时
+    private static final long CONFIRMATION_TIMEOUT = 10000; // Timeout de confirmação de 10 segundos
     
     public RelationManagementGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        // 检查管理员权限
+        // Verifica permissão de administrador
         if (!player.hasPermission("guild.admin")) {
             player.sendMessage(ColorUtils.colorize("&cVocê não tem permissão de administrador!"));
             return;
@@ -60,22 +60,22 @@ public class RelationManagementGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preenche a borda
         fillBorder(inventory);
         
-        // 设置关系列表
+        // Configura a lista de relações
         setupRelationList(inventory);
         
-        // 设置分页按钮
+        // Configura os botões de paginação
         setupPaginationButtons(inventory);
         
-        // 设置操作按钮
+        // Configura os botões de ação
         setupActionButtons(inventory);
     }
     
     private void setupRelationList(Inventory inventory) {
         if (isLoading) {
-            // 显示加载中
+            // Mostra carregando
             ItemStack loadingItem = createItem(Material.SAND, ColorUtils.colorize("&eCarregando..."), 
                 ColorUtils.colorize("&7Carregando dados de relação..."));
             inventory.setItem(22, loadingItem);
@@ -83,7 +83,7 @@ public class RelationManagementGUI implements GUI {
         }
         
         if (allRelations.isEmpty()) {
-            // 显示无数据
+            // Mostra sem dados
             ItemStack emptyItem = createItem(Material.BARRIER, ColorUtils.colorize("&cSem dados de relação"), 
                 ColorUtils.colorize("&7Nenhuma relação de guilda encontrada"));
             inventory.setItem(22, emptyItem);
@@ -97,9 +97,9 @@ public class RelationManagementGUI implements GUI {
             if (startIndex + i < endIndex) {
                 GuildRelation relation = allRelations.get(startIndex + i);
                 
-                // 计算在2-8列，2-5行的位置 (slots 10-43)
-                int row = (i / 7) + 1; // 2-5行
-                int col = (i % 7) + 1; // 2-8列
+                // Calcula a posição nas colunas 2-8, linhas 2-5 (slots 10-43)
+                int row = (i / 7) + 1; // Linhas 2-5
+                int col = (i % 7) + 1; // Colunas 2-8
                 int slot = row * 9 + col;
                 
                 inventory.setItem(slot, createRelationItem(relation));
@@ -111,7 +111,7 @@ public class RelationManagementGUI implements GUI {
         Material material = getRelationMaterial(relation.getType());
         String status = getRelationStatus(relation.getStatus());
         
-        // 检查是否在待删除状态
+        // Verifica se está em estado de exclusão pendente
         boolean isPendingDeletion = pendingDeletions.containsKey(player.getUniqueId()) && 
                                   pendingDeletions.get(player.getUniqueId()).getId() == relation.getId();
         
@@ -181,17 +181,17 @@ public class RelationManagementGUI implements GUI {
     private void setupPaginationButtons(Inventory inventory) {
         int totalPages = (int) Math.ceil((double) allRelations.size() / itemsPerPage);
         
-        // 上一页按钮
+        // Botão de página anterior
         if (currentPage > 0) {
             inventory.setItem(45, createItem(Material.ARROW, ColorUtils.colorize("&aPágina Anterior"), 
                 ColorUtils.colorize("&7Página " + (currentPage) + "")));
         }
         
-        // 页码信息
+        // Informação do número da página
         inventory.setItem(49, createItem(Material.PAPER, ColorUtils.colorize("&ePágina " + (currentPage + 1) + " de " + totalPages + ""),
             ColorUtils.colorize("&7Total de " + allRelations.size() + " relações")));
         
-        // 下一页按钮
+        // Botão de próxima página
         if (currentPage < totalPages - 1) {
             inventory.setItem(53, createItem(Material.ARROW, ColorUtils.colorize("&aPróxima Página"), 
                 ColorUtils.colorize("&7Página " + (currentPage + 2) + "")));
@@ -199,11 +199,11 @@ public class RelationManagementGUI implements GUI {
     }
     
     private void setupActionButtons(Inventory inventory) {
-        // 返回按钮
+        // Botão de voltar
         inventory.setItem(46, createItem(Material.BARRIER, ColorUtils.colorize("&cVoltar"),
             ColorUtils.colorize("&7Voltar ao menu de admin")));
         
-        // 刷新按钮
+        // Botão de atualizar
         inventory.setItem(52, createItem(Material.EMERALD, ColorUtils.colorize("&aAtualizar Lista"),
             ColorUtils.colorize("&7Recarregar dados de relação")));
     }
@@ -211,7 +211,7 @@ public class RelationManagementGUI implements GUI {
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
         
-        // 填充边框
+        // Preenche a borda
         for (int i = 0; i < 9; i++) {
             inventory.setItem(i, border);
             inventory.setItem(i + 45, border);
@@ -224,11 +224,11 @@ public class RelationManagementGUI implements GUI {
     }
     
     private void loadRelations() {
-        if (isLoading) return; // 防止重复加载
+        if (isLoading) return; // Previne carregamento duplicado
         
         isLoading = true;
         
-        // 获取所有工会的关系
+        // Obtém relações de todas as guildas
         plugin.getGuildService().getAllGuildsAsync().thenCompose(guilds -> {
             List<CompletableFuture<List<GuildRelation>>> relationFutures = new ArrayList<>();
             
@@ -255,7 +255,7 @@ public class RelationManagementGUI implements GUI {
                 isLoading = false;
                 
                 if (player.isOnline()) {
-                    // 使用安全的刷新方法
+                    // Usa método seguro de atualização
                     plugin.getGuiManager().refreshGUI(player);
                 }
             });
@@ -273,7 +273,7 @@ public class RelationManagementGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查管理员权限
+        // Verifica permissão de administrador
         if (!player.hasPermission("guild.admin")) {
             player.sendMessage(ColorUtils.colorize("&cVocê não tem permissão de administrador!"));
             return;
@@ -284,24 +284,24 @@ public class RelationManagementGUI implements GUI {
         String itemName = clickedItem.getItemMeta().getDisplayName();
         
         if (slot == 46) {
-            // 返回
+            // Voltar
             plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin));
         } else if (slot == 52) {
-            // 刷新
+            // Atualizar
             if (!isLoading) {
                 loadRelations();
                 player.sendMessage(ColorUtils.colorize("&aAtualizando lista de relações..."));
             }
         } else if (slot == 45 && currentPage > 0) {
-            // 上一页
+            // Página anterior
             currentPage--;
             plugin.getGuiManager().refreshGUI(player);
         } else if (slot == 53 && currentPage < (int) Math.ceil((double) allRelations.size() / itemsPerPage) - 1) {
-            // 下一页
+            // Próxima página
             currentPage++;
             plugin.getGuiManager().refreshGUI(player);
         } else if (slot >= 10 && slot <= 43) {
-            // 关系项目 - 检查是否在2-8列，2-5行范围内
+            // Item de relação - verifica se está no intervalo de colunas 2-8, linhas 2-5
             int row = slot / 9;
             int col = slot % 9;
             if (row >= 1 && row <= 4 && col >= 1 && col <= 7) {
@@ -317,30 +317,30 @@ public class RelationManagementGUI implements GUI {
     
     private void handleRelationClick(Player player, GuildRelation relation, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
-            // 左键处理
+            // Processamento de clique esquerdo
             if (pendingDeletions.containsKey(player.getUniqueId()) && 
                 pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
-                // 确认删除
+                // Confirmar exclusão
                 confirmDeleteRelation(player, relation);
             } else {
-                // 开始删除流程
+                // Iniciar processo de exclusão
                 startDeleteRelation(player, relation);
             }
         } else if (clickType == ClickType.RIGHT) {
-            // 右键处理
+            // Processamento de clique direito
             if (pendingDeletions.containsKey(player.getUniqueId()) && 
                 pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
-                // 取消删除
+                // Cancelar exclusão
                 cancelDeleteRelation(player);
             } else {
-                // 查看详情
+                // Ver detalhes
                 showRelationDetails(player, relation);
             }
         }
     }
     
     private void startDeleteRelation(Player player, GuildRelation relation) {
-        // 设置待删除状态
+        // Define estado de exclusão pendente
         pendingDeletions.put(player.getUniqueId(), relation);
         deletionTimers.put(player.getUniqueId(), System.currentTimeMillis());
         
@@ -348,31 +348,31 @@ public class RelationManagementGUI implements GUI {
         player.sendMessage(ColorUtils.colorize("&cBotão Esquerdo: Confirmar | Botão Direito: Cancelar"));
         player.sendMessage(ColorUtils.colorize("&eCancelamento automático em 10 segundos"));
         
-        // 刷新GUI显示待删除状态
+        // Atualiza GUI para mostrar estado de exclusão pendente
         plugin.getGuiManager().refreshGUI(player);
         
-        // 设置超时任务
+        // Define tarefa de timeout
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (pendingDeletions.containsKey(player.getUniqueId()) && 
                 pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
                 cancelDeleteRelation(player);
             }
-        }, 200L); // 10秒 = 200 ticks
+        }, 200L); // 10 segundos = 200 ticks
     }
     
     private void confirmDeleteRelation(Player player, GuildRelation relation) {
-        // 清除待删除状态
+        // Limpa estado de exclusão pendente
         pendingDeletions.remove(player.getUniqueId());
         deletionTimers.remove(player.getUniqueId());
         
-        // 执行删除
+        // Executa exclusão
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (success) {
                     player.sendMessage(ColorUtils.colorize("&aRelação excluída: " + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name()));
-                    // 从列表中移除
+                    // Remove da lista
                     allRelations.remove(relation);
-                    // 刷新GUI
+                    // Atualiza GUI
                     plugin.getGuiManager().refreshGUI(player);
                 } else {
                     player.sendMessage(ColorUtils.colorize("&cFalha ao excluir relação!"));
@@ -392,7 +392,7 @@ public class RelationManagementGUI implements GUI {
         
         if (relation != null) {
             player.sendMessage(ColorUtils.colorize("&eExclusão de relação cancelada: " + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name()));
-            // 刷新GUI
+            // Atualiza GUI
             plugin.getGuiManager().refreshGUI(player);
         }
     }
@@ -435,16 +435,16 @@ public class RelationManagementGUI implements GUI {
     
     @Override
     public void onClose(Player player) {
-        // 清理资源
+        // Limpa recursos
         allRelations.clear();
-        // 清除待删除状态
+        // Limpa estado de exclusão pendente
         pendingDeletions.remove(player.getUniqueId());
         deletionTimers.remove(player.getUniqueId());
     }
     
     @Override
     public void refresh(Player player) {
-        // 使用GUIManager的安全刷新方法
+        // Usa método seguro de atualização do GUIManager
         if (player.isOnline()) {
             plugin.getGuiManager().refreshGUI(player);
         }

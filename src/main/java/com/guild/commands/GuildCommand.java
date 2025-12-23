@@ -655,7 +655,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     }
     private void handleDecline(Player player, String[] args) {
         if (args.length < 2) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("invite.decline-command", "&e输入 &c/guild decline {inviter} &e拒绝邀请");
+            String message = plugin.getConfigManager().getMessagesConfig().getString("invite.decline-command", "&eDigite &c/guild decline {inviter} &e para recusar o convite");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -956,7 +956,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     }
     private void handlePlaceholder(Player player, String[] args) {
         if (!player.hasPermission("guild.admin")) {
-            player.sendMessage(ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("general.no-permission", "&c您没有权限执行此操作！")));
+            player.sendMessage(ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("general.no-permission", "&cVocê não tem permissão para realizar esta operação!")));
             return;
         }
         if (args.length < 2) {
@@ -967,7 +967,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         }
         String placeholder = "%guild_" + args[1] + "%";
         String result = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder);
-        player.sendMessage(ColorUtils.colorize("&6=== PlaceholderAPI 测试 ==="));
+        player.sendMessage(ColorUtils.colorize("&6=== Teste do PlaceholderAPI ==="));
         player.sendMessage(ColorUtils.colorize("&eVariável: &f" + placeholder));
         player.sendMessage(ColorUtils.colorize("&eResultado: &f" + result));
         player.sendMessage(ColorUtils.colorize("&6========================"));

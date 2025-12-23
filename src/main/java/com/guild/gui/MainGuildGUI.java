@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
- * 主工会GUI - 六个主要入口
+ * GUI Principal da Guilda - Seis entradas principais
  */
 public class MainGuildGUI implements GUI {
     
@@ -40,10 +40,10 @@ public class MainGuildGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preenche a borda
         fillBorder(inventory);
         
-        // 工会信息按钮
+        // Botão de informações da guilda
         ItemStack guildInfo = createItem(
             Material.BOOK,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.guild-info.name", "&eInformações da Guilda")),
@@ -52,7 +52,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(20, guildInfo);
         
-        // 成员管理按钮
+        // Botão de gerenciamento de membros
         ItemStack memberManagement = createItem(
             Material.PLAYER_HEAD,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.member-management.name", "&eGerenciamento de Membros")),
@@ -61,7 +61,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(22, memberManagement);
         
-        // 申请管理按钮
+        // Botão de gerenciamento de inscrições
         ItemStack applicationManagement = createItem(
             Material.PAPER,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.application-management.name", "&eGerenciamento de Inscrições")),
@@ -70,7 +70,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(24, applicationManagement);
         
-        // 工会设置按钮
+        // Botão de configurações da guilda
         ItemStack guildSettings = createItem(
             Material.COMPASS,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.guild-settings.name", "&eConfigurações da Guilda")),
@@ -79,7 +79,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(29, guildSettings);
         
-        // 工会列表按钮
+        // Botão de lista de guildas
         ItemStack guildList = createItem(
             Material.BOOKSHELF,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.guild-list.name", "&eLista de Guildas")),
@@ -119,40 +119,40 @@ public class MainGuildGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 20: // 工会信息
+            case 20: // Informações da guilda
                 openGuildInfoGUI(player);
                 break;
-            case 22: // 成员管理
+            case 22: // Gerenciamento de membros
                 openMemberManagementGUI(player);
                 break;
-            case 24: // 申请管理
+            case 24: // Gerenciamento de inscrições
                 openApplicationManagementGUI(player);
                 break;
-            case 29: // 工会设置
+            case 29: // Configurações da guilda
                 openGuildSettingsGUI(player);
                 break;
-            case 31: // 工会列表
+            case 31: // Lista de guildas
                 openGuildListGUI(player);
                 break;
             case 32: // Status da Guilda
                 openGuildStatusGUI(player);
                 break;
-            case 33: // 工会关系
+            case 33: // Relações da guilda
                 openGuildRelationsGUI(player);
                 break;
-            case 4: // 创建工会
+            case 4: // Criar guilda
                 openCreateGuildGUI(player);
                 break;
         }
     }
     
     /**
-     * 打开工会信息GUI
+     * Abre GUI de informações da guilda
      */
     private void openGuildInfoGUI(Player player) {
-        // 检查玩家是否有工会
+        // Verifica se o jogador tem uma guilda
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
+            // Garante execução da GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&cVocê ainda não tem uma guilda");
@@ -160,7 +160,7 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
                 
-                // 打开工会信息GUI
+                // Abre GUI de informações da guilda
                 GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
                 plugin.getGuiManager().openGUI(player, guildInfoGUI);
             });
@@ -168,12 +168,12 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开成员管理GUI
+     * Abre GUI de gerenciamento de membros
      */
     private void openMemberManagementGUI(Player player) {
-        // 检查玩家是否有工会
+        // Verifica se o jogador tem uma guilda
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
+            // Garante execução da GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&cVocê ainda não tem uma guilda");
@@ -181,7 +181,7 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
                 
-                // 打开成员管理GUI
+                // Abre GUI de gerenciamento de membros
                 MemberManagementGUI memberManagementGUI = new MemberManagementGUI(plugin, guild);
                 plugin.getGuiManager().openGUI(player, memberManagementGUI);
             });
@@ -189,12 +189,12 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开申请管理GUI
+     * Abre GUI de gerenciamento de inscrições
      */
     private void openApplicationManagementGUI(Player player) {
-        // 检查玩家是否有工会
+        // Verifica se o jogador tem uma guilda
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
+            // Garante execução da GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&cVocê ainda não tem uma guilda");
@@ -202,9 +202,9 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
                 
-                // 检查权限
+                // Verifica permissão
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
-                    // 确保在主线程中执行GUI操作
+                    // Garante execução da GUI na thread principal
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || !member.getRole().canInvite()) {
                             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cPermissão insuficiente");
@@ -212,7 +212,7 @@ public class MainGuildGUI implements GUI {
                             return;
                         }
                         
-                        // 打开申请管理GUI
+                        // Abre GUI de gerenciamento de inscrições
                         ApplicationManagementGUI applicationManagementGUI = new ApplicationManagementGUI(plugin, guild);
                         plugin.getGuiManager().openGUI(player, applicationManagementGUI);
                     });
@@ -222,12 +222,12 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开工会设置GUI
+     * Abre GUI de configurações da guilda
      */
     private void openGuildSettingsGUI(Player player) {
-        // 检查玩家是否有工会
+        // Verifica se o jogador tem uma guilda
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
+            // Garante execução da GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&cVocê ainda não tem uma guilda");
@@ -235,9 +235,9 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
                 
-                // 检查权限
+                // Verifica permissão
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
-                    // 确保在主线程中执行GUI操作
+                    // Garante execução da GUI na thread principal
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
                             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode realizar esta ação");
@@ -245,7 +245,7 @@ public class MainGuildGUI implements GUI {
                             return;
                         }
                         
-                        // 打开工会设置GUI
+                        // Abre GUI de configurações da guilda
                         GuildSettingsGUI guildSettingsGUI = new GuildSettingsGUI(plugin, guild);
                         plugin.getGuiManager().openGUI(player, guildSettingsGUI);
                     });
@@ -255,21 +255,21 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开工会列表GUI
+     * Abre GUI de lista de guildas
      */
     private void openGuildListGUI(Player player) {
-        // 打开工会列表GUI
+        // Abre GUI de lista de guildas
         GuildListGUI guildListGUI = new GuildListGUI(plugin);
         plugin.getGuiManager().openGUI(player, guildListGUI);
     }
     
     /**
-     * 打开工会关系GUI
+     * Abre GUI de relações da guilda
      */
     private void openGuildRelationsGUI(Player player) {
-        // 检查玩家是否有工会
+        // Verifica se o jogador tem uma guilda
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
+            // Garante execução da GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&cVocê ainda não tem uma guilda");
@@ -277,9 +277,9 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
                 
-                // 检查权限
+                // Verifica permissão
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
-                    // 确保在主线程中执行GUI操作
+                    // Garante execução da GUI na thread principal
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
                             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode gerenciar relações");
@@ -287,7 +287,7 @@ public class MainGuildGUI implements GUI {
                             return;
                         }
                         
-                        // 打开工会关系GUI
+                        // Abre GUI de relações da guilda
                         GuildRelationsGUI guildRelationsGUI = new GuildRelationsGUI(plugin, guild, player);
                         plugin.getGuiManager().openGUI(player, guildRelationsGUI);
                     });
@@ -318,12 +318,12 @@ public class MainGuildGUI implements GUI {
     }
 
     /**
-     * 打开创建工会GUI
+     * Abre GUI de criação de guilda
      */
     private void openCreateGuildGUI(Player player) {
-        // 检查玩家是否已有工会
+        // Verifica se o jogador já tem uma guilda
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
+            // Garante execução da GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild != null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("create.already-in-guild", "&cVocê já está em uma guilda!");
@@ -331,7 +331,7 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
                 
-                // 打开创建工会GUI
+                // Abre GUI de criação de guilda
                 CreateGuildGUI createGuildGUI = new CreateGuildGUI(plugin);
                 plugin.getGuiManager().openGUI(player, createGuildGUI);
             });
@@ -339,7 +339,7 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 填充边框
+     * Preenche a borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -354,7 +354,7 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Cria item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

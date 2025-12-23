@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 工会权限设置GUI
+ * GUI de Configurações de Permissão da Guilda
  */
 public class GuildPermissionsGUI implements GUI {
     
@@ -38,26 +38,26 @@ public class GuildPermissionsGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preenche a borda
         fillBorder(inventory);
         
-        // 显示权限信息
+        // Mostra informações de permissão
         displayPermissions(inventory);
         
-        // 添加返回按钮
+        // Adiciona botão de voltar
         setupButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == 49) {
-            // 返回
+            // Voltar
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
         }
     }
     
     /**
-     * 填充边框
+     * Preenche a borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -72,10 +72,10 @@ public class GuildPermissionsGUI implements GUI {
     }
     
     /**
-     * 显示权限信息
+     * Mostra informações de permissão
      */
     private void displayPermissions(Inventory inventory) {
-        // 会长权限
+        // Permissões do líder
         ItemStack leaderPerms = createItem(
             Material.GOLDEN_HELMET,
             ColorUtils.colorize("&6Permissões do Líder"),
@@ -86,7 +86,7 @@ public class GuildPermissionsGUI implements GUI {
         );
         inventory.setItem(10, leaderPerms);
         
-        // 官员权限
+        // Permissões de oficial
         ItemStack officerPerms = createItem(
             Material.IRON_HELMET,
             ColorUtils.colorize("&ePermissões de Oficial"),
@@ -96,7 +96,7 @@ public class GuildPermissionsGUI implements GUI {
         );
         inventory.setItem(12, officerPerms);
         
-        // 成员权限
+        // Permissões de membro
         ItemStack memberPerms = createItem(
             Material.LEATHER_HELMET,
             ColorUtils.colorize("&7Permissões de Membro"),
@@ -105,7 +105,7 @@ public class GuildPermissionsGUI implements GUI {
         );
         inventory.setItem(14, memberPerms);
         
-        // 权限说明
+        // Informações de permissão
         ItemStack info = createItem(
             Material.BOOK,
             ColorUtils.colorize("&eInformações de Permissão"),
@@ -116,7 +116,7 @@ public class GuildPermissionsGUI implements GUI {
         );
         inventory.setItem(16, info);
         
-        // 当前权限状态
+        // Status atual de permissão
         ItemStack currentStatus = createItem(
             Material.SHIELD,
             ColorUtils.colorize("&aStatus Atual de Permissão"),
@@ -128,10 +128,10 @@ public class GuildPermissionsGUI implements GUI {
     }
     
     /**
-     * 设置按钮
+     * Configura botões
      */
     private void setupButtons(Inventory inventory) {
-        // 返回按钮
+        // Botão de voltar
         ItemStack back = createItem(
             Material.ARROW,
             ColorUtils.colorize("&7Voltar"),
@@ -141,7 +141,7 @@ public class GuildPermissionsGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Cria item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

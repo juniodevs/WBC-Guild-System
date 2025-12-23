@@ -1,38 +1,38 @@
-# Guild插件 PlaceholderAPI 变量使用说明
+# Guia de Uso das Variáveis PlaceholderAPI do Plugin de Guilda
 
-## 概述
+## Visão Geral
 
-Guild插件本次更新提供了完整的 PlaceholderAPI 支持，允许其他插件和聊天栏显示工会相关的动态信息。所有变量都支持颜色代码和中文显示。
+Esta atualização do plugin de Guilda oferece suporte completo ao PlaceholderAPI, permitindo que outros plugins e o chat exibam informações dinâmicas relacionadas à guilda. Todas as variáveis suportam códigos de cores.
 
-## 基础工会信息变量
+## Variáveis Básicas de Informação da Guilda
 
-### 工会基本信息
-- `%guild_name%` - 工会名称
-- `%guild_tag%` - 工会标签
-- `%guild_membercount%` - 工会成员数量
-- `%guild_maxmembers%` - 工会最大成员数
-- `%guild_level%` - 工会等级
-- `%guild_balance%` - 工会余额（保留2位小数）
-- `%guild_frozen%` - 工会状态（正常/已冻结/无工会）
+### Informações Básicas da Guilda
+- `%guild_name%` - Nome da Guilda
+- `%guild_tag%` - Tag da Guilda
+- `%guild_membercount%` - Quantidade de Membros
+- `%guild_maxmembers%` - Máximo de Membros
+- `%guild_level%` - Nível da Guilda
+- `%guild_balance%` - Saldo da Guilda (2 casas decimais)
+- `%guild_frozen%` - Status da Guilda (Normal/Congelada/Sem Guilda)
 
-### 玩家在工会中的信息
-- `%guild_role%` - 玩家在工会中的角色（会长/官员/成员）
-- `%guild_joined%` - 玩家加入工会的时间
-- `%guild_contribution%` - 玩家对工会的贡献度
+### Informações do Jogador na Guilda
+- `%guild_role%` - Cargo do Jogador (Líder/Oficial/Membro)
+- `%guild_joined%` - Data de Entrada na Guilda
+- `%guild_contribution%` - Contribuição do Jogador
 
-## 工会状态检查变量
+## Variáveis de Verificação de Status da Guilda
 
-### 玩家状态
-- `%guild_hasguild%` - 玩家是否有工会（是/否）
-- `%guild_isleader%` - 玩家是否是会长（是/否）
-- `%guild_isofficer%` - 玩家是否是官员（是/否）
-- `%guild_ismember%` - 玩家是否是工会成员（是/否）
+### Status do Jogador
+- `%guild_hasguild%` - Jogador tem guilda (Sim/Não)
+- `%guild_isleader%` - Jogador é líder (Sim/Não)
+- `%guild_isofficer%` - Jogador é oficial (Sim/Não)
+- `%guild_ismember%` - Jogador é membro (Sim/Não)
 
-## 工会权限检查变量
+## Variáveis de Verificação de Permissão da Guilda
 
-### 权限状态
-- `%guild_caninvite%` - 是否可以邀请玩家（是/否）
-- `%guild_cankick%` - 是否可以踢出成员（是/否）
-- `%guild_canpromote%` - 是否可以提升成员（是/否）
-- `%guild_candemote%` - 是否可以降级成员（是/否）
+### Status de Permissão
+- `%guild_caninvite%` - Pode convidar jogadores (Sim/Não)
+- `%guild_cankick%` - Pode expulsar membros (Sim/Não)
+- `%guild_canpromote%` - Pode promover membros (Sim/Não)
+- `%guild_candemote%` - Pode rebaixar membros (Sim/Não)
 

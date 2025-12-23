@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 邀请成员GUI
+ * GUI de Convidar Membro
  */
 public class InviteMemberGUI implements GUI {
     
@@ -48,46 +48,46 @@ public class InviteMemberGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preenche a borda
         fillBorder(inventory);
         
-        // 显示在线玩家
+        // Mostra jogadores online
         displayOnlinePlayers(inventory);
         
-        // 添加导航按钮
+        // Adiciona botões de navegação
         setupNavigationButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot >= 9 && slot < 45) {
-            // 玩家头像区域
+            // Área de cabeças dos jogadores
             int playerIndex = slot - 9 + (currentPage * 36);
             if (playerIndex < onlinePlayers.size()) {
                 Player targetPlayer = onlinePlayers.get(playerIndex);
                 handleInvitePlayer(player, targetPlayer);
             }
         } else if (slot == 45) {
-            // 上一页
+            // Página anterior
             if (currentPage > 0) {
                 currentPage--;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 53) {
-            // 下一页
+            // Próxima página
             int maxPage = (onlinePlayers.size() - 1) / 36;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 49) {
-            // 返回
+            // Voltar
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
         }
     }
     
     /**
-     * 填充边框
+     * Preenche a borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -102,7 +102,7 @@ public class InviteMemberGUI implements GUI {
     }
     
     /**
-     * 显示在线玩家
+     * Mostra jogadores online
      */
     private void displayOnlinePlayers(Inventory inventory) {
         int startIndex = currentPage * 36;
@@ -118,10 +118,10 @@ public class InviteMemberGUI implements GUI {
     }
     
     /**
-     * 设置导航按钮
+     * Configura botões de navegação
      */
     private void setupNavigationButtons(Inventory inventory) {
-        // 上一页按钮
+        // Botão de página anterior
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
@@ -131,7 +131,7 @@ public class InviteMemberGUI implements GUI {
             inventory.setItem(45, prevPage);
         }
         
-        // 下一页按钮
+        // Botão de próxima página
         int maxPage = (onlinePlayers.size() - 1) / 36;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
@@ -142,7 +142,7 @@ public class InviteMemberGUI implements GUI {
             inventory.setItem(53, nextPage);
         }
         
-        // 返回按钮
+        // Botão de voltar
         ItemStack back = createItem(
             Material.BARRIER,
             ColorUtils.colorize("&cVoltar"),
@@ -152,7 +152,7 @@ public class InviteMemberGUI implements GUI {
     }
     
     /**
-     * 创建玩家头像
+     * Cria cabeça do jogador
      */
     private ItemStack createPlayerHead(Player player) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -172,10 +172,10 @@ public class InviteMemberGUI implements GUI {
     }
     
     /**
-     * 处理邀请玩家
+     * Processa convite de jogador
      */
     private void handleInvitePlayer(Player inviter, Player target) {
-        // 检查目标玩家是否已经在工会中
+        // Verifica se o jogador alvo já está em uma guilda
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("invite.already-in-guild", "&cEste jogador já está em uma guilda!");
@@ -183,7 +183,7 @@ public class InviteMemberGUI implements GUI {
                 return;
             }
             
-            // 发送邀请
+            // Envia convite
             plugin.getGuildService().sendInvitationAsync(guild.getId(), inviter.getUniqueId(), inviter.getName(), target.getUniqueId(), target.getName()).thenAccept(success -> {
                 if (success) {
                     String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.sent", "&aConvite enviado para &e{player}&a!")
@@ -202,7 +202,7 @@ public class InviteMemberGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Cria item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
