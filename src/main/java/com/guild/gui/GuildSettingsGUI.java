@@ -1,12 +1,7 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import org.bukkit.Bukkit;
+import java.util.Arrays;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,8 +9,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * 工会设置GUI
@@ -49,9 +47,6 @@ public class GuildSettingsGUI implements GUI {
         // 添加设置按钮
         setupSettingsButtons(inventory);
         
-        // 显示当前设置信息
-        displayCurrentSettings(inventory);
-        
         // 添加功能按钮
         setupFunctionButtons(inventory);
     }
@@ -59,46 +54,46 @@ public class GuildSettingsGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 10: // 修改名称
+            case 11: // Modificar nome
                 handleChangeName(player);
                 break;
-            case 11: // 修改描述
+            case 12: // Modificar descrição
                 handleChangeDescription(player);
                 break;
-            case 12: // 修改标签
+            case 13: // Modificar tag
                 handleChangeTag(player);
                 break;
-            case 16: // 权限设置
+            case 14: // Configurar permissões
                 handlePermissions(player);
                 break;
-            case 20: // 邀请成员
+            case 19: // Convidar membro
                 handleInviteMember(player);
                 break;
-            case 22: // 踢出成员
+            case 21: // Expulsar membro
                 handleKickMember(player);
                 break;
-            case 24: // 提升成员
+            case 23: // Promover membro
                 handlePromoteMember(player);
                 break;
-            case 26: // 降级成员
+            case 25: // Rebaixar membro
                 handleDemoteMember(player);
                 break;
-            case 30: // 处理申请
+            case 30: // Gerenciar solicitações
                 handleApplications(player);
                 break;
-            case 31: // 工会关系管理
+            case 31: // Gerenciar relações
                 handleRelations(player);
                 break;
-            case 32: // 工会日志
+            case 32: // Logs da guilda
                 handleGuildLogs(player);
                 break;
-            case 34: // 离开工会
+            case 34: // Sair da guilda
                 handleLeaveGuild(player);
                 break;
-            case 36: // 删除工会
+            case 28: // Excluir guilda
                 handleDeleteGuild(player);
                 break;
-            case 49: // 返回
+            case 49: // Voltar
                 plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
                 break;
         }
@@ -129,7 +124,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-name.name", "&eAlterar Nome")),
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-name.lore.1", "&7Alterar nome da guilda"))
         );
-        inventory.setItem(10, changeName);
+        inventory.setItem(11, changeName);
         
         // 修改描述按钮
         ItemStack changeDescription = createItem(
@@ -137,7 +132,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-description.name", "&eAlterar Descrição")),
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-description.lore.1", "&7Alterar descrição da guilda"))
         );
-        inventory.setItem(11, changeDescription);
+        inventory.setItem(12, changeDescription);
         
         // 修改标签按钮
         ItemStack changeTag = createItem(
@@ -145,7 +140,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-tag.name", "&eAlterar Tag")),
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-tag.lore.1", "&7Alterar tag da guilda"))
         );
-        inventory.setItem(12, changeTag);
+        inventory.setItem(13, changeTag);
         
         // 权限设置按钮
         ItemStack permissions = createItem(
@@ -153,7 +148,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.permissions.name", "&eConfigurar Permissões")),
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.permissions.lore.1", "&7Gerenciar permissões de membros"))
         );
-        inventory.setItem(16, permissions);
+        inventory.setItem(14, permissions);
     }
     
     /**
@@ -166,7 +161,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.invite-member", "&aConvidar Membro")),
             ColorUtils.colorize("&7Convidar novos membros para a guilda")
         );
-        inventory.setItem(20, inviteMember);
+        inventory.setItem(19, inviteMember);
         
         // 踢出成员按钮
         ItemStack kickMember = createItem(
@@ -174,7 +169,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.kick-member", "&cExpulsar Membro")),
             ColorUtils.colorize("&7Expulsar membro da guilda")
         );
-        inventory.setItem(22, kickMember);
+        inventory.setItem(21, kickMember);
         
         // 提升成员按钮
         ItemStack promoteMember = createItem(
@@ -182,7 +177,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.promote-member", "&6Promover Membro")),
             ColorUtils.colorize("&7Promover cargo do membro")
         );
-        inventory.setItem(24, promoteMember);
+        inventory.setItem(23, promoteMember);
         
         // 降级成员按钮
         ItemStack demoteMember = createItem(
@@ -190,7 +185,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.demote-member", "&7Rebaixar Membro")),
             ColorUtils.colorize("&7Rebaixar cargo do membro")
         );
-        inventory.setItem(26, demoteMember);
+        inventory.setItem(25, demoteMember);
         
         // 处理申请按钮
         ItemStack applications = createItem(
@@ -214,7 +209,7 @@ public class GuildSettingsGUI implements GUI {
             Material.BOOK,
             ColorUtils.colorize("&6Logs da Guilda"),
             ColorUtils.colorize("&7Ver histórico de operações da guilda"),
-            ColorUtils.colorize("&7Registrar todas as operações importantes")
+            ColorUtils.colorize("&7Registra todas as operações importantes")
         );
         inventory.setItem(32, guildLogs);
         
@@ -233,7 +228,7 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize("&7Excluir a guilda inteira"),
             ColorUtils.colorize("&cEsta operação é irreversível!")
         );
-        inventory.setItem(36, deleteGuild);
+        inventory.setItem(28, deleteGuild);
         
         // 返回按钮
         ItemStack back = createItem(
@@ -244,44 +239,7 @@ public class GuildSettingsGUI implements GUI {
         inventory.setItem(49, back);
     }
     
-    /**
-     * 显示当前设置信息
-     */
-    private void displayCurrentSettings(Inventory inventory) {
-        // 当前名称
-        ItemStack currentName = createItem(
-            Material.NAME_TAG,
-            ColorUtils.colorize("&eNome Atual"),
-            ColorUtils.colorize("&7" + (guild.getName() != null ? guild.getName() : "Sem Nome"))
-        );
-        inventory.setItem(10, currentName);
-        
-        // 当前描述
-        ItemStack currentDescription = createItem(
-            Material.BOOK,
-            ColorUtils.colorize("&eDescrição Atual"),
-            ColorUtils.colorize("&7" + (guild.getDescription() != null ? guild.getDescription() : "Sem Descrição"))
-        );
-        inventory.setItem(11, currentDescription);
-        
-        // 当前标签
-        ItemStack currentTag = createItem(
-            Material.OAK_SIGN,
-            ColorUtils.colorize("&eTag Atual"),
-            ColorUtils.colorize("&7" + (guild.getTag() != null ? "[" + guild.getTag() + "]" : "Sem Tag"))
-        );
-        inventory.setItem(13, currentTag);
-        
-        // 当前权限设置
-        ItemStack currentPermissions = createItem(
-            Material.SHIELD,
-            ColorUtils.colorize("&eConfigurações de Permissão Atuais"),
-            ColorUtils.colorize("&7Líder: Todas as permissões"),
-            ColorUtils.colorize("&7Oficial: Convidar, Expulsar"),
-            ColorUtils.colorize("&7Membro: Permissões básicas")
-        );
-        inventory.setItem(17, currentPermissions);
-    }
+
     
     /**
      * 处理修改名称
@@ -482,6 +440,8 @@ public class GuildSettingsGUI implements GUI {
         // 打开确认删除GUI
         plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
     }
+    
+
     
     /**
      * 创建物品

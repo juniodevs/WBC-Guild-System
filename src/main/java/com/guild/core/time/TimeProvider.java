@@ -44,15 +44,15 @@ public final class TimeProvider {
         return nowLocalDateTime().plusDays(days).format(FULL_FORMATTER);
     }
 
-    /** 格式化 LocalDateTime 为完整字符串。 */
+    /** 格式化 LocalDateTime para string completa. */
     public static String format(LocalDateTime dateTime) {
-        if (dateTime == null) return "未知";
+        if (dateTime == null) return "Desconhecido";
         return dateTime.format(FULL_FORMATTER);
     }
 
-    /** 仅日期字符串 yyyy-MM-dd */
+    /** Apenas string de data yyyy-MM-dd */
     public static String formatDate(LocalDateTime dateTime) {
-        if (dateTime == null) return "未知";
+        if (dateTime == null) return "Desconhecido";
         return dateTime.format(DATE_FORMATTER);
     }
 }

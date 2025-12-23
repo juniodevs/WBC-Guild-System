@@ -1,38 +1,38 @@
-# Guild插件 PlaceholderAPI 变量使用说明
+# Plugin de Guild - Guia de Uso das Variáveis do PlaceholderAPI
 
-## 概述
+## Visão Geral
 
-Guild插件本次更新提供了完整的 PlaceholderAPI 支持，允许其他插件和聊天栏显示工会相关的动态信息。所有变量都支持颜色代码和中文显示。
+Esta atualização do plugin Guild fornece suporte completo ao PlaceholderAPI, permitindo que outros plugins e o chat exibam informações dinâmicas relacionadas às guildas. Todas as variáveis suportam códigos de cores e exibição em português.
 
-## 基础工会信息变量
+## Variáveis de Informações Básicas da Guilda
 
-### 工会基本信息
-- `%guild_name%` - 工会名称
-- `%guild_tag%` - 工会标签
-- `%guild_membercount%` - 工会成员数量
-- `%guild_maxmembers%` - 工会最大成员数
-- `%guild_level%` - 工会等级
-- `%guild_balance%` - 工会余额（保留2位小数）
-- `%guild_frozen%` - 工会状态（正常/已冻结/无工会）
+### Informações Básicas da Guilda
+- `%guild_name%` - Nome da guilda
+- `%guild_tag%` - Tag da guilda
+- `%guild_membercount%` - Quantidade de membros da guilda
+- `%guild_maxmembers%` - Número máximo de membros da guilda
+- `%guild_level%` - Nível da guilda
+- `%guild_balance%` - Saldo da guilda (com 2 casas decimais)
+- `%guild_frozen%` - Status da guilda (Normal/Congelada/Sem Guilda)
 
-### 玩家在工会中的信息
-- `%guild_role%` - 玩家在工会中的角色（会长/官员/成员）
-- `%guild_joined%` - 玩家加入工会的时间
-- `%guild_contribution%` - 玩家对工会的贡献度
+### Informações do Jogador na Guilda
+- `%guild_role%` - Cargo do jogador na guilda (Líder/Oficial/Membro)
+- `%guild_joined%` - Data em que o jogador entrou na guilda
+- `%guild_contribution%` - Contribuição do jogador para a guilda
 
-## 工会状态检查变量
+## Variáveis de Verificação de Status da Guilda
 
-### 玩家状态
-- `%guild_hasguild%` - 玩家是否有工会（是/否）
-- `%guild_isleader%` - 玩家是否是会长（是/否）
-- `%guild_isofficer%` - 玩家是否是官员（是/否）
-- `%guild_ismember%` - 玩家是否是工会成员（是/否）
+### Status do Jogador
+- `%guild_hasguild%` - Se o jogador tem uma guilda (Sim/Não)
+- `%guild_isleader%` - Se o jogador é o líder (Sim/Não)
+- `%guild_isofficer%` - Se o jogador é um oficial (Sim/Não)
+- `%guild_ismember%` - Se o jogador é membro da guilda (Sim/Não)
 
-## 工会权限检查变量
+## Variáveis de Verificação de Permissões da Guilda
 
-### 权限状态
-- `%guild_caninvite%` - 是否可以邀请玩家（是/否）
-- `%guild_cankick%` - 是否可以踢出成员（是/否）
-- `%guild_canpromote%` - 是否可以提升成员（是/否）
-- `%guild_candemote%` - 是否可以降级成员（是/否）
+### Status de Permissões
+- `%guild_caninvite%` - Se pode convidar jogadores (Sim/Não)
+- `%guild_cankick%` - Se pode expulsar membros (Sim/Não)
+- `%guild_canpromote%` - Se pode promover membros (Sim/Não)
+- `%guild_candemote%` - Se pode rebaixar membros (Sim/Não)
 

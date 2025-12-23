@@ -1,13 +1,14 @@
 package com.guild.core.utils;
 
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import com.guild.GuildPlugin;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
+
 import org.bukkit.entity.Player;
 
-import java.time.format.DateTimeFormatter;
+import com.guild.GuildPlugin;
 import com.guild.core.time.TimeProvider;
-import java.util.concurrent.CompletableFuture;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * 占位符处理工具类
@@ -56,7 +57,13 @@ public class PlaceholderUtils {
             // 静态信息
             .replace("{guild_level}", String.valueOf(guild.getLevel()))
             .replace("{guild_max_members}", String.valueOf(guild.getMaxMembers()))
-            .replace("{guild_frozen}", guild.isFrozen() ? "已冻结" : "正常");
+            .replace("{guild_frozen}", guild.isFrozen() ? "Congelada" : "Normal")
+            
+            // 工会经济和升级信息(valores padrão até implementar sistema econômico)
+            .replace("{guild_balance}", "0.00")
+            .replace("{guild_balance_formatted}", "0")
+            .replace("{guild_next_level_requirement}", formatBalance(getNextLevelRequirement(guild.getLevel())))
+            .replace("{guild_level_progress}", "0%");
         
         // 处理颜色代码
         return ColorUtils.colorize(result);
@@ -175,10 +182,10 @@ public class PlaceholderUtils {
      */
     private static String getRoleDisplayName(GuildMember.Role role) {
         switch (role) {
-            case LEADER: return "会长";
-            case OFFICER: return "官员";
-            case MEMBER: return "成员";
-            default: return "未知";
+            case LEADER: return "Líder";
+            case OFFICER: return "Oficial";
+            case MEMBER: return "Membro";
+            default: return "Desconhecido";
         }
     }
     
@@ -250,6 +257,46 @@ public class PlaceholderUtils {
         cachedSeparatorEnabled = cfg.getBoolean("display.role-separator.enabled", true);
         cachedSeparatorFollowRoleColor = cfg.getBoolean("display.role-separator.color-per-role", true);
         cachedSeparatorDefaultColor = cfg.getString("display.role-separator.default-color", "&7");
+    }
+    
+    /**
+     * 格式化余额显示
+     */
+    private static String formatBalance(double balance) {
+        if (balance >= 1000000) {
+            return String.format("%.1fM", balance / 1000000);
+        } else if (balance >= 1000) {
+            return String.format("%.1fK", balance / 1000);
+        } else {
+            return String.format("%.2f", balance);
+        }
+    }
+    
+    /**
+     * 获取下一级升级所需金额
+     */
+    private static double getNextLevelRequirement(int currentLevel) {
+        // 基础升级费用，可以根据需要调整公式
+        return 10000 * Math.pow(1.5, currentLevel);
+    }
+    
+    /**
+     * 格式化升级进度显示
+     */
+    private static String formatLevelProgress(double currentBalance, double requiredBalance) {
+        if (requiredBalance <= 0) {
+            return "100%";
+        }
+        double progress = (currentBalance / requiredBalance) * 100;
+        progress = Math.min(progress, 100); // 限制最大为100%
+        return String.format("%.1f%%", progress);
+    }
+    
+    /**
+     * Formata o progresso de nível (sobrecarga para quando não há balance)
+     */
+    private static String formatLevelProgress() {
+        return "0%";
     }
     
 }

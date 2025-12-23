@@ -40,7 +40,7 @@ public class GUIManager implements Listener {
      */
     public void initialize() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        logger.info("GUI管理器初始化完成");
+        logger.info("Gerenciador de GUI inicializado");
     }
     
     /**
@@ -69,9 +69,9 @@ public class GUIManager implements Listener {
             // 记录打开的GUI
             openGuis.put(player.getUniqueId(), gui);
             
-            logger.info("玩家 " + player.getName() + " 打开了GUI: " + gui.getClass().getSimpleName());
+            logger.info("Jogador " + player.getName() + " abriu GUI: " + gui.getClass().getSimpleName());
         } catch (Exception e) {
-            logger.severe("打开GUI时发生错误: " + e.getMessage());
+            logger.severe("Erro ao abrir GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -94,10 +94,10 @@ public class GUIManager implements Listener {
                     player.closeInventory();
                 }
                 
-                logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                logger.info("Jogador " + player.getName() + " fechou GUI: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("关闭GUI时发生错误: " + e.getMessage());
+            logger.severe("Erro ao fechar GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -178,10 +178,10 @@ public class GUIManager implements Listener {
                 }
                 
                 gui.onClose(player);
-                logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                logger.info("Jogador " + player.getName() + " fechou GUI: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("处理GUI关闭时发生错误: " + e.getMessage());
+            logger.severe("Erro ao processar fechamento de GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -205,10 +205,10 @@ public class GUIManager implements Listener {
                 // 重新打开GUI
                 openGUI(player, gui);
                 
-                logger.info("玩家 " + player.getName() + " 的GUI已刷新: " + gui.getClass().getSimpleName());
+                logger.info("GUI do jogador " + player.getName() + " foi atualizada: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("刷新GUI时发生错误: " + e.getMessage());
+            logger.severe("Erro ao atualizar GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -231,9 +231,9 @@ public class GUIManager implements Listener {
                 }
             }
             openGuis.clear();
-            logger.info("已关闭所有GUI");
+            logger.info("Todas as GUIs foram fechadas");
         } catch (Exception e) {
-            logger.severe("关闭所有GUI时发生错误: " + e.getMessage());
+            logger.severe("Erro ao fechar todas as GUIs: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -257,9 +257,9 @@ public class GUIManager implements Listener {
         
         try {
             inputModes.put(player.getUniqueId(), inputHandler);
-            logger.info("玩家 " + player.getName() + " 进入输入模式");
+            logger.info("Jogador " + player.getName() + " entrou em modo de entrada");
         } catch (Exception e) {
-            logger.severe("设置输入模式时发生错误: " + e.getMessage());
+            logger.severe("Erro ao definir modo de entrada: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -308,9 +308,9 @@ public class GUIManager implements Listener {
         
         try {
             inputModes.remove(player.getUniqueId());
-            logger.info("玩家 " + player.getName() + " 退出输入模式");
+            logger.info("Jogador " + player.getName() + " saiu do modo de entrada");
         } catch (Exception e) {
-            logger.severe("清除输入模式时发生错误: " + e.getMessage());
+            logger.severe("Erro ao limpar modo de entrada: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -337,7 +337,7 @@ public class GUIManager implements Listener {
             }
             return false;
         } catch (Exception e) {
-            logger.severe("处理玩家输入时发生错误: " + e.getMessage());
+            logger.severe("Erro ao processar entrada do jogador: " + e.getMessage());
             e.printStackTrace();
             // 发生错误时清除输入模式
             clearInputMode(player);

@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 成员管理GUI
+ * GUI de Gerenciamento de Membros
  */
 public class MemberManagementGUI implements GUI {
     
     private final GuildPlugin plugin;
     private final Guild guild;
     private int currentPage = 0;
-    private static final int MEMBERS_PER_PAGE = 28; // 4行7列，除去边框
+    private static final int MEMBERS_PER_PAGE = 28; // 4 linhas x 7 colunas, excluindo borda
     
     public MemberManagementGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
@@ -46,38 +46,38 @@ public class MemberManagementGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preencher borda
         fillBorder(inventory);
         
-        // 添加功能按钮
+        // Adicionar botões de função
         setupFunctionButtons(inventory);
         
-        // 加载成员列表
+        // Carregar lista de membros
         loadMembers(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否是功能按钮
+        // Verificar se é botão de função
         if (isFunctionButton(slot)) {
             handleFunctionButton(player, slot);
             return;
         }
         
-        // 检查是否是分页按钮
+        // Verificar se é botão de paginação
         if (isPaginationButton(slot)) {
             handlePaginationButton(player, slot);
             return;
         }
         
-        // 检查是否是成员按钮
+        // Verificar se é botão de membro
         if (isMemberSlot(slot)) {
             handleMemberClick(player, slot, clickedItem, clickType);
         }
     }
     
     /**
-     * 填充边框
+     * Preencher borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -92,10 +92,10 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 设置功能按钮
+     * Configurar botões de função
      */
     private void setupFunctionButtons(Inventory inventory) {
-        // 邀请成员按钮
+        // Botão de convidar membro
         ItemStack inviteMember = createItem(
             Material.EMERALD_BLOCK,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("member-management.items.invite-member.name", "&aConvidar Membro")),
@@ -103,7 +103,7 @@ public class MemberManagementGUI implements GUI {
         );
         inventory.setItem(45, inviteMember);
         
-        // 踢出成员按钮
+        // Botão de expulsar membro
         ItemStack kickMember = createItem(
             Material.REDSTONE_BLOCK,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("member-management.items.kick-member.name", "&cExpulsar Membro")),
@@ -111,7 +111,7 @@ public class MemberManagementGUI implements GUI {
         );
         inventory.setItem(47, kickMember);
         
-        // 提升成员按钮
+        // Botão de promover membro
         ItemStack promoteMember = createItem(
             Material.GOLD_INGOT,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("member-management.items.promote-member.name", "&6Promover Membro")),
@@ -119,7 +119,7 @@ public class MemberManagementGUI implements GUI {
         );
         inventory.setItem(49, promoteMember);
         
-        // 降级成员按钮
+        // Botão de rebaixar membro
         ItemStack demoteMember = createItem(
             Material.IRON_INGOT,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("member-management.items.demote-member.name", "&7Rebaixar Membro")),
@@ -127,7 +127,7 @@ public class MemberManagementGUI implements GUI {
         );
         inventory.setItem(51, demoteMember);
         
-        // 返回按钮
+        // Botão de voltar
         ItemStack back = createItem(
             Material.ARROW,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("member-management.items.back.name", "&7Voltar")),
@@ -137,12 +137,12 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 加载成员列表
+     * Carregar lista de membros
      */
     private void loadMembers(Inventory inventory) {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(members -> {
             if (members == null || members.isEmpty()) {
-                // 显示无成员信息
+                // Exibir informação de sem membros
                 ItemStack noMembers = createItem(
                     Material.BARRIER,
                     ColorUtils.colorize("&cSem membros"),
@@ -152,29 +152,29 @@ public class MemberManagementGUI implements GUI {
                 return;
             }
             
-            // 计算分页
+            // Calcular paginação
             int totalPages = (members.size() - 1) / MEMBERS_PER_PAGE;
             if (currentPage > totalPages) {
                 currentPage = totalPages;
             }
             
-            // 设置分页按钮
+            // Configurar botões de paginação
             setupPaginationButtons(inventory, totalPages);
             
-            // 显示当前页的成员
+            // Exibir membros da página atual
             int startIndex = currentPage * MEMBERS_PER_PAGE;
             int endIndex = Math.min(startIndex + MEMBERS_PER_PAGE, members.size());
             
-            int slotIndex = 10; // 从第2行第2列开始
+            int slotIndex = 10; // Começa na linha 2, coluna 2
             for (int i = startIndex; i < endIndex; i++) {
                 GuildMember member = members.get(i);
-                if (slotIndex >= 44) break; // 避免超出显示区域
+                if (slotIndex >= 44) break; // Evitar ultrapassar área de exibição
                 
                 ItemStack memberItem = createMemberItem(member);
                 inventory.setItem(slotIndex, memberItem);
                 
                 slotIndex++;
-                if (slotIndex % 9 == 8) { // 跳过边框
+                if (slotIndex % 9 == 8) { // Pular borda
                     slotIndex += 2;
                 }
             }
@@ -182,10 +182,10 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 设置分页按钮
+     * Configurar botões de paginação
      */
     private void setupPaginationButtons(Inventory inventory, int totalPages) {
-        // 上一页按钮
+        // Botão de página anterior
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
@@ -195,7 +195,7 @@ public class MemberManagementGUI implements GUI {
             inventory.setItem(18, previousPage);
         }
         
-        // 下一页按钮
+        // Botão de próxima página
         if (currentPage < totalPages) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
@@ -207,7 +207,7 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 创建成员物品
+     * Criar item de membro
      */
     private ItemStack createMemberItem(GuildMember member) {
         Material material;
@@ -246,7 +246,7 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 获取角色权限描述
+     * Obter descrição de permissões do cargo
      */
     private String getRolePermissions(GuildMember.Role role) {
         switch (role) {
@@ -260,84 +260,84 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 检查是否是功能按钮
+     * Verificar se é botão de função
      */
     private boolean isFunctionButton(int slot) {
         return slot == 45 || slot == 47 || slot == 49 || slot == 51 || slot == 53;
     }
     
     /**
-     * 检查是否是分页按钮
+     * Verificar se é botão de paginação
      */
     private boolean isPaginationButton(int slot) {
         return slot == 18 || slot == 26;
     }
     
     /**
-     * 检查是否是成员槽位
+     * Verificar se é slot de membro
      */
     private boolean isMemberSlot(int slot) {
         return slot >= 10 && slot <= 44 && slot % 9 != 0 && slot % 9 != 8;
     }
     
     /**
-     * 处理功能按钮点击
+     * Processar clique em botão de função
      */
     private void handleFunctionButton(Player player, int slot) {
         switch (slot) {
-            case 45: // 邀请成员
+            case 45: // Convidar membro
                 handleInviteMember(player);
                 break;
-            case 47: // 踢出成员
+            case 47: // Expulsar membro
                 handleKickMember(player);
                 break;
-            case 49: // 提升成员
+            case 49: // Promover membro
                 handlePromoteMember(player);
                 break;
-            case 51: // 降级成员
+            case 51: // Rebaixar membro
                 handleDemoteMember(player);
                 break;
-            case 53: // 返回
+            case 53: // Voltar
                 plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
                 break;
         }
     }
     
     /**
-     * 处理分页按钮点击
+     * Processar clique em botão de paginação
      */
     private void handlePaginationButton(Player player, int slot) {
-        if (slot == 18) { // 上一页
+        if (slot == 18) { // Página anterior
             if (currentPage > 0) {
                 currentPage--;
                 refreshInventory(player);
             }
-        } else if (slot == 26) { // 下一页
+        } else if (slot == 26) { // Próxima página
             currentPage++;
             refreshInventory(player);
         }
     }
     
     /**
-     * 处理成员点击
+     * Processar clique no membro
      */
     private void handleMemberClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 获取点击的成员
+        // Obter o membro clicado
         int memberIndex = (currentPage * MEMBERS_PER_PAGE) + (slot - 10);
-        if (memberIndex % 9 == 0 || memberIndex % 9 == 8) return; // 跳过边框
+        if (memberIndex % 9 == 0 || memberIndex % 9 == 8) return; // Pular bordas
         
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(members -> {
             if (members != null && memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
                 
                 if (clickType == ClickType.LEFT) {
-                    // 查看成员详情
+                    // Ver detalhes do membro
                     showMemberDetails(player, member);
                 } else if (clickType == ClickType.RIGHT) {
-                    // 踢出成员
+                    // Expulsar membro
                     handleKickMemberDirect(player, member);
                 } else if (clickType == ClickType.MIDDLE) {
-                    // 提升/降级成员
+                    // Promover/Rebaixar membro
                     handlePromoteDemoteMember(player, member);
                 }
             }
@@ -345,18 +345,18 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 显示成员详情
+     * Mostrar detalhes do membro
      */
     private void showMemberDetails(Player player, GuildMember member) {
-        // 打开成员详情GUI
+        // Abrir GUI de detalhes do membro
         plugin.getGuiManager().openGUI(player, new MemberDetailsGUI(plugin, guild, member, player));
     }
     
     /**
-     * 直接踢出成员
+     * Expulsar membro diretamente
      */
     private void handleKickMemberDirect(Player player, GuildMember member) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || !executor.getRole().canKick()) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cPermissão insuficiente");
@@ -364,14 +364,14 @@ public class MemberManagementGUI implements GUI {
                 return;
             }
             
-            // 不能踢出会长
+            // Não pode expulsar o líder
             if (member.getRole() == GuildMember.Role.LEADER) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.cannot-kick-leader", "&cNão é possível expulsar o líder da guilda");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
-            // 确认踢出
+            // Confirmar expulsão
             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-kick", "&cTem certeza que deseja expulsar {member}? Digite &f/guild kick {member} confirm &cpara confirmar")
                 .replace("{member}", member.getPlayerName());
             player.sendMessage(ColorUtils.colorize(message));
@@ -379,10 +379,10 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 提升/降级成员
+     * Promover/Rebaixar membro
      */
     private void handlePromoteDemoteMember(Player player, GuildMember member) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode realizar esta ação");
@@ -390,7 +390,7 @@ public class MemberManagementGUI implements GUI {
                 return;
             }
             
-            // 不能操作会长
+            // Não pode operar o líder
             if (member.getRole() == GuildMember.Role.LEADER) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.cannot-modify-leader", "&cNão é possível modificar o cargo do líder da guilda");
                 player.sendMessage(ColorUtils.colorize(message));
@@ -398,12 +398,12 @@ public class MemberManagementGUI implements GUI {
             }
             
             if (member.getRole() == GuildMember.Role.OFFICER) {
-                // 降级为普通成员
+                // Rebaixar para membro comum
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-demote", "&cTem certeza que deseja rebaixar {member}? Digite &f/guild demote {member} confirm &cpara confirmar")
                     .replace("{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             } else {
-                // 提升为官员
+                // Promover para oficial
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-promote", "&aTem certeza que deseja promover {member} a Oficial? Digite &f/guild promote {member} confirm &apara confirmar")
                     .replace("{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
@@ -412,10 +412,10 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 处理邀请成员
+     * Processar convite de membro
      */
     private void handleInviteMember(Player player) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || !member.getRole().canInvite()) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cPermissão insuficiente");
@@ -423,17 +423,17 @@ public class MemberManagementGUI implements GUI {
                 return;
             }
             
-            // 打开邀请成员GUI
+            // Abrir GUI de convidar membro
             InviteMemberGUI inviteMemberGUI = new InviteMemberGUI(plugin, guild);
             plugin.getGuiManager().openGUI(player, inviteMemberGUI);
         });
     }
     
     /**
-     * 处理踢出成员
+     * Processar expulsão de membro
      */
     private void handleKickMember(Player player) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || !member.getRole().canKick()) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cPermissão insuficiente");
@@ -441,17 +441,17 @@ public class MemberManagementGUI implements GUI {
                 return;
             }
             
-            // 打开踢出成员GUI
+            // Abrir GUI de expulsar membro
             KickMemberGUI kickMemberGUI = new KickMemberGUI(plugin, guild);
             plugin.getGuiManager().openGUI(player, kickMemberGUI);
         });
     }
     
     /**
-     * 处理提升成员
+     * Processar promoção de membro
      */
     private void handlePromoteMember(Player player) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || member.getRole() != GuildMember.Role.LEADER) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode realizar esta ação");
@@ -459,17 +459,17 @@ public class MemberManagementGUI implements GUI {
                 return;
             }
             
-            // 打开提升成员GUI
+            // Abrir GUI de promover membro
             PromoteMemberGUI promoteMemberGUI = new PromoteMemberGUI(plugin, guild);
             plugin.getGuiManager().openGUI(player, promoteMemberGUI);
         });
     }
     
     /**
-     * 处理降级成员
+     * Processar rebaixamento de membro
      */
     private void handleDemoteMember(Player player) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || member.getRole() != GuildMember.Role.LEADER) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode realizar esta ação");
@@ -477,21 +477,21 @@ public class MemberManagementGUI implements GUI {
                 return;
             }
             
-            // 打开降级成员GUI
+            // Abrir GUI de rebaixar membro
             DemoteMemberGUI demoteMemberGUI = new DemoteMemberGUI(plugin, guild);
             plugin.getGuiManager().openGUI(player, demoteMemberGUI);
         });
     }
     
     /**
-     * 刷新库存
+     * Atualizar inventário
      */
     private void refreshInventory(Player player) {
         plugin.getGuiManager().refreshGUI(player);
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

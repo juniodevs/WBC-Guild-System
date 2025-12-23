@@ -40,22 +40,22 @@ public class VariableTestUtils {
         for (String testText : testTexts) {
             String processed = GUIUtils.processGUIVariables(testText, guild, player);
             player.sendMessage("§eOriginal: §f" + testText);
-            player.sendMessage("§a处理后: §f" + processed);
+            player.sendMessage("§aProcessado: §f" + processed);
             
-            // 检查是否有未解析的变量
+            // Verificar se há variáveis não resolvidas
             if (GUIUtils.hasUnresolvedVariables(processed)) {
                 List<String> unresolved = GUIUtils.getUnresolvedVariables(processed);
-                player.sendMessage("§c未解析变量: §f" + unresolved);
+                player.sendMessage("§cVariáveis não resolvidas: §f" + unresolved);
             }
             player.sendMessage("");
         }
         
         // 测试异步变量
         plugin.getGuildService().getGuildMemberCountAsync(guild.getId()).thenAccept(memberCount -> {
-            String asyncTest = "成员数量: {member_count}/{guild_max_members}";
+            String asyncTest = "Quantidade de membros: {member_count}/{guild_max_members}";
             GUIUtils.processGUIVariablesAsync(asyncTest, guild, player, plugin).thenAccept(processed -> {
-                player.sendMessage("§6异步测试: §f" + asyncTest);
-                player.sendMessage("§a异步结果: §f" + processed);
+                player.sendMessage("§6Teste assíncrono: §f" + asyncTest);
+                player.sendMessage("§aResultado assíncrono: §f" + processed);
             });
         });
     }
@@ -65,30 +65,30 @@ public class VariableTestUtils {
      * @param player 玩家对象
      */
     public static void testColorCodes(Player player) {
-        player.sendMessage("§6=== 颜色代码测试 ===");
+        player.sendMessage("§6=== Teste de Códigos de Cores ===");
         
         String[] colorTests = {
-            "&a绿色文本",
-            "&c红色文本",
-            "&e黄色文本",
-            "&b青色文本",
-            "&d粉色文本",
-            "&f白色文本",
-            "&7灰色文本",
-            "&8深灰色文本",
-            "&9蓝色文本",
-            "&0黑色文本",
-            "&l粗体文本",
-            "&n下划线文本",
-            "&o斜体文本",
-            "&k随机字符",
-            "&r重置格式"
+            "&aTexto verde",
+            "&cTexto vermelho",
+            "&eTexto amarelo",
+            "&bTexto ciano",
+            "&dTexto rosa",
+            "&fTexto branco",
+            "&7Texto cinza",
+            "&8Texto cinza escuro",
+            "&9Texto azul",
+            "&0Texto preto",
+            "&lTexto negrito",
+            "&nTexto sublinhado",
+            "&oTexto itálico",
+            "&kCaracteres aleatórios",
+            "&rResetar formatação"
         };
         
         for (String test : colorTests) {
             String processed = ColorUtils.colorize(test);
-            player.sendMessage("§e原始: §f" + test);
-            player.sendMessage("§a处理后: §f" + processed);
+            player.sendMessage("§eOriginal: §f" + test);
+            player.sendMessage("§aProcessado: §f" + processed);
             player.sendMessage("");
         }
     }
@@ -99,18 +99,18 @@ public class VariableTestUtils {
      * @param player 玩家对象
      */
     public static void testPlaceholderUtils(Guild guild, Player player) {
-        player.sendMessage("§6=== PlaceholderUtils测试 ===");
+        player.sendMessage("§6=== Teste do PlaceholderUtils ===");
         
-        String testText = "工会: {guild_name}, 会长: {leader_name}, 等级: {guild_level}, 资金: {guild_balance_formatted}";
+        String testText = "Guilda: {guild_name}, Líder: {leader_name}, Nível: {guild_level}, Saldo: {guild_balance_formatted}";
         String processed = PlaceholderUtils.replaceGuildPlaceholders(testText, guild, player);
         
         player.sendMessage("§eOriginal: §f" + testText);
-        player.sendMessage("§a处理后: §f" + processed);
+        player.sendMessage("§aProcessado: §f" + processed);
         
-        // 检查是否有未解析的变量
+        // Verificar se há variáveis não resolvidas
         if (GUIUtils.hasUnresolvedVariables(processed)) {
             List<String> unresolved = GUIUtils.getUnresolvedVariables(processed);
-            player.sendMessage("§c未解析变量: §f" + unresolved);
+            player.sendMessage("§cVariáveis não resolvidas: §f" + unresolved);
         }
     }
 }

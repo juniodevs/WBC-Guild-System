@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 踢出成员GUI
+ * GUI de expulsar membro
  */
 public class KickMemberGUI implements GUI {
     
@@ -30,7 +30,7 @@ public class KickMemberGUI implements GUI {
     public KickMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
-        // 初始化时获取成员列表
+        // Inicializar obtendo lista de membros
         this.members = List.of();
         loadMembers();
     }
@@ -55,40 +55,40 @@ public class KickMemberGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preencher borda
         fillBorder(inventory);
         
-        // 显示成员列表
+        // Exibir lista de membros
         displayMembers(inventory);
         
-        // 添加导航按钮
+        // Adicionar botões de navegação
         setupNavigationButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot >= 9 && slot < 45) {
-            // 成员头像区域
+            // Área de cabeças de membros
             int memberIndex = slot - 9 + (currentPage * 36);
             if (memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
                 handleKickMember(player, member);
             }
         } else if (slot == 45) {
-            // 上一页
+            // Página anterior
             if (currentPage > 0) {
                 currentPage--;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 53) {
-            // 下一页
+            // Próxima página
             int maxPage = (members.size() - 1) / 36;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 49) {
-            // 返回
+            // Voltar
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
         }
     }

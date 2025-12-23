@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 提升成员GUI
+ * GUI de Promoção de Membro
  */
 public class PromoteMemberGUI implements GUI {
     
@@ -30,7 +30,7 @@ public class PromoteMemberGUI implements GUI {
     public PromoteMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
-        // 初始化时获取成员列表
+        // Inicializar obtendo lista de membros
         this.members = List.of();
         loadMembers();
     }
@@ -39,7 +39,7 @@ public class PromoteMemberGUI implements GUI {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(memberList -> {
             this.members = memberList.stream()
                 .filter(member -> !member.getPlayerUuid().equals(guild.getLeaderUuid()))
-                .filter(member -> !member.getRole().equals(GuildMember.Role.OFFICER)) // 只显示可以提升的成员
+                .filter(member -> !member.getRole().equals(GuildMember.Role.OFFICER)) // Exibir apenas membros que podem ser promovidos
                 .collect(java.util.stream.Collectors.toList());
         });
     }
@@ -56,46 +56,46 @@ public class PromoteMemberGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preencher borda
         fillBorder(inventory);
         
-        // 显示成员列表
+        // Exibir lista de membros
         displayMembers(inventory);
         
-        // 添加导航按钮
+        // Adicionar botões de navegação
         setupNavigationButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot >= 9 && slot < 45) {
-            // 成员头像区域
+            // Área de avatar de membro
             int memberIndex = slot - 9 + (currentPage * 36);
             if (memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
                 handlePromoteMember(player, member);
             }
         } else if (slot == 45) {
-            // 上一页
+            // Página anterior
             if (currentPage > 0) {
                 currentPage--;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 53) {
-            // 下一页
+            // Próxima página
             int maxPage = (members.size() - 1) / 36;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 49) {
-            // 返回
+            // Voltar
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
         }
     }
     
     /**
-     * 填充边框
+     * Preencher borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -110,7 +110,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * 显示成员列表
+     * Exibir lista de membros
      */
     private void displayMembers(Inventory inventory) {
         int startIndex = currentPage * 36;
@@ -126,10 +126,10 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * 设置导航按钮
+     * Configurar botões de navegação
      */
     private void setupNavigationButtons(Inventory inventory) {
-        // 上一页按钮
+        // Botão de página anterior
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
@@ -139,7 +139,7 @@ public class PromoteMemberGUI implements GUI {
             inventory.setItem(45, prevPage);
         }
         
-        // 下一页按钮
+        // Botão de próxima página
         int maxPage = (members.size() - 1) / 36;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
@@ -150,7 +150,7 @@ public class PromoteMemberGUI implements GUI {
             inventory.setItem(53, nextPage);
         }
         
-        // 返回按钮
+        // Botão de voltar
         ItemStack back = createItem(
             Material.BARRIER,
             ColorUtils.colorize("&cVoltar"),
@@ -160,7 +160,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * 创建成员头像
+     * Criar avatar de membro
      */
     private ItemStack createMemberHead(GuildMember member) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -180,24 +180,24 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * 处理提升成员
+     * Processar promoção de membro
      */
     private void handlePromoteMember(Player promoter, GuildMember member) {
-        // 检查权限
+        // Verificar permissões
         if (!promoter.hasPermission("guild.promote")) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cPermissão insuficiente");
             promoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
-        // 提升成员
+        // Promover membro
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.OFFICER, promoter.getUniqueId()).thenAccept(success -> {
             if (success) {
                 String promoterMessage = plugin.getConfigManager().getMessagesConfig().getString("promote.success", "&a{player} promovido a Oficial!")
                     .replace("{player}", member.getPlayerName());
                 promoter.sendMessage(ColorUtils.colorize(promoterMessage));
                 
-                // 通知被提升的玩家
+                // Notificar jogador promovido
                 Player promotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (promotedPlayer != null) {
                     String promotedMessage = plugin.getConfigManager().getMessagesConfig().getString("promote.promoted", "&aVocê foi promovido a Oficial da guilda {guild}!")
@@ -205,7 +205,7 @@ public class PromoteMemberGUI implements GUI {
                     promotedPlayer.sendMessage(ColorUtils.colorize(promotedMessage));
                 }
                 
-                // 刷新GUI
+                // Atualizar GUI
                 plugin.getGuiManager().openGUI(promoter, new PromoteMemberGUI(plugin, guild));
             } else {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("promote.failed", "&cFalha ao promover membro!");
@@ -215,7 +215,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

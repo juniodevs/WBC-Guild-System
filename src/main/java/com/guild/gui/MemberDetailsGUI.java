@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 成员详情GUI
+ * GUI de Detalhes do Membro
  */
 public class MemberDetailsGUI implements GUI {
     
@@ -50,41 +50,41 @@ public class MemberDetailsGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preencher borda
         fillBorder(inventory);
         
-        // 设置成员头像
+        // Configurar cabeça do membro
         setupMemberHead(inventory);
         
-        // 设置基本信息
+        // Configurar informações básicas
         setupBasicInfo(inventory);
         
-        // 设置权限信息
+        // Configurar informações de permissões
         setupPermissionInfo(inventory);
         
-        // 设置操作按钮
+        // Configurar botões de ação
         setupActionButtons(inventory);
         
-        // 设置返回按钮
+        // Configurar botão de voltar
         setupBackButton(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否是操作按钮
+        // Verificar se é botão de ação
         if (isActionButton(slot)) {
             handleActionButton(player, slot);
             return;
         }
         
-        // 检查是否是返回按钮
+        // Verificar se é botão de voltar
         if (slot == 49) {
             plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild));
         }
     }
     
     /**
-     * 填充边框
+     * Preencher borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -99,7 +99,7 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 设置成员头像
+     * Configurar avatar de membro
      */
     private void setupMemberHead(Inventory inventory) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -126,7 +126,7 @@ public class MemberDetailsGUI implements GUI {
             lore.add(ColorUtils.colorize("&7UUID: &f" + member.getPlayerUuid()));
             lore.add(ColorUtils.colorize("&7Cargo: &f" + member.getRole().getDisplayName()));
             
-            // 格式化加入时间
+            // Formatar tempo de ingresso
             if (member.getJoinedAt() != null) {
                 String joinTime = member.getJoinedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
                 lore.add(ColorUtils.colorize("&7Entrou em: &f" + joinTime));
@@ -142,10 +142,10 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 设置基本信息
+     * Configurar informações básicas
      */
     private void setupBasicInfo(Inventory inventory) {
-        // 基本信息标题
+        // Título de informações básicas
         ItemStack infoTitle = createItem(
             Material.BOOK,
             ColorUtils.colorize("&6Informações Básicas"),
@@ -153,7 +153,7 @@ public class MemberDetailsGUI implements GUI {
         );
         inventory.setItem(20, infoTitle);
         
-        // 角色信息
+        // Informações de cargo
         ItemStack roleInfo = createItem(
             Material.GOLDEN_HELMET,
             ColorUtils.colorize("&eInformações do Cargo"),
@@ -163,7 +163,7 @@ public class MemberDetailsGUI implements GUI {
         );
         inventory.setItem(21, roleInfo);
         
-        // 时间信息
+        // Informações de tempo
         ItemStack timeInfo = createItem(
             Material.CLOCK,
             ColorUtils.colorize("&eInformações de Tempo"),
@@ -172,7 +172,7 @@ public class MemberDetailsGUI implements GUI {
         );
         inventory.setItem(22, timeInfo);
         
-        // 贡献信息
+        // Informações de contribuição
         ItemStack contributionInfo = createItem(
             Material.EMERALD,
             ColorUtils.colorize("&eInformações de Contribuição"),
@@ -183,10 +183,10 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 设置权限信息
+     * Configurar informações de permissão
      */
     private void setupPermissionInfo(Inventory inventory) {
-        // 权限信息标题
+        // Título de informações de permissão
         ItemStack permissionTitle = createItem(
             Material.SHIELD,
             ColorUtils.colorize("&6Informações de Permissão"),
@@ -194,7 +194,7 @@ public class MemberDetailsGUI implements GUI {
         );
         inventory.setItem(29, permissionTitle);
         
-        // 具体权限列表
+        // Lista de permissões específicas
         List<String> permissions = getRolePermissions(member.getRole());
         ItemStack permissionList = createItem(
             Material.PAPER,
@@ -203,7 +203,7 @@ public class MemberDetailsGUI implements GUI {
         );
         inventory.setItem(30, permissionList);
         
-        // 权限等级
+        // Nível de permissão
         ItemStack permissionLevel = createItem(
             Material.EXPERIENCE_BOTTLE,
             ColorUtils.colorize("&eNível de Permissão"),
@@ -214,10 +214,10 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 设置操作按钮
+     * Configurar botões de ação
      */
     private void setupActionButtons(Inventory inventory) {
-        // 检查当前玩家是否有权限执行操作
+        // Verificar se o jogador atual tem permissão para executar operações
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), viewer.getUniqueId()).thenAccept(viewerMember -> {
             if (viewerMember == null) return;
             
@@ -277,7 +277,7 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 设置返回按钮
+     * Configurar botão de voltar
      */
     private void setupBackButton(Inventory inventory) {
         ItemStack back = createItem(
@@ -289,34 +289,34 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 检查是否是操作按钮
+     * Verificar se é botão de ação
      */
     private boolean isActionButton(int slot) {
         return slot == 37 || slot == 39 || slot == 41;
     }
     
     /**
-     * 处理操作按钮点击
+     * Processar clique em botão de ação
      */
     private void handleActionButton(Player player, int slot) {
         switch (slot) {
-            case 37: // 踢出成员
+            case 37: // Expulsar membro
                 handleKickMember(player);
                 break;
-            case 39: // 提升/降级成员
+            case 39: // Promover/Rebaixar membro
                 handlePromoteDemoteMember(player);
                 break;
-            case 41: // 发送消息
+            case 41: // Enviar mensagem
                 handleSendMessage(player);
                 break;
         }
     }
     
     /**
-     * 处理踢出成员
+     * Processar expulsão de membro
      */
     private void handleKickMember(Player player) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || !executor.getRole().canKick()) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cPermissão insuficiente");
@@ -324,7 +324,7 @@ public class MemberDetailsGUI implements GUI {
                 return;
             }
             
-            // 确认踢出
+            // Confirmar expulsão
             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-kick", "&cTem certeza que deseja expulsar {member}? Digite &f/guild kick {member} confirm &cpara confirmar")
                 .replace("{member}", member.getPlayerName());
             player.sendMessage(ColorUtils.colorize(message));
@@ -333,10 +333,10 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 处理提升/降级成员
+     * Processar promoção/rebaixamento de membro
      */
     private void handlePromoteDemoteMember(Player player) {
-        // 检查权限
+        // Verificar permissões
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode realizar esta ação");
@@ -345,12 +345,12 @@ public class MemberDetailsGUI implements GUI {
             }
             
             if (member.getRole() == GuildMember.Role.OFFICER) {
-                // 降级
+                // Rebaixar
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-demote", "&cTem certeza que deseja rebaixar {member}? Digite &f/guild demote {member} confirm &cpara confirmar")
                     .replace("{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             } else {
-                // 提升
+                // Promover
                 String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-promote", "&aTem certeza que deseja promover {member} a Oficial? Digite &f/guild promote {member} confirm &apara confirmar")
                     .replace("{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
@@ -360,7 +360,7 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 处理发送消息
+     * Processar envio de mensagem
      */
     private void handleSendMessage(Player player) {
         String message = plugin.getConfigManager().getMessagesConfig().getString("gui.open-chat", "&eDigite a mensagem para enviar para {member}:")
@@ -368,12 +368,12 @@ public class MemberDetailsGUI implements GUI {
         player.sendMessage(ColorUtils.colorize(message));
         player.closeInventory();
         
-        // 这里可以集成聊天系统，暂时只是提示
-        // TODO: 实现私信系统
+        // Aqui pode integrar sistema de chat, por enquanto apenas aviso
+        // TODO: Implementar sistema de mensagens privadas
     }
     
     /**
-     * 获取角色等级
+     * Obter nível do cargo
      */
     private String getRoleLevel(GuildMember.Role role) {
         switch (role) {
@@ -387,7 +387,7 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 检查玩家是否在线
+     * Verificar se o jogador está online
      */
     private boolean isPlayerOnline(java.util.UUID playerUuid) {
         Player player = plugin.getServer().getPlayer(playerUuid);
@@ -425,23 +425,23 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 获取成员贡献
+     * Obter contribuição do membro
      */
     private String getMemberContribution() {
-        // TODO: 实现贡献统计系统
+        // TODO: Implementar sistema de estatísticas de contribuição
         return "Pendente";
     }
     
     /**
-     * 获取成员活跃度
+     * Obter atividade do membro
      */
     private String getMemberActivity() {
-        // TODO: 实现活跃度统计系统
+        // TODO: Implementar sistema de estatísticas de atividade
         return "Pendente";
     }
     
     /**
-     * 获取角色权限列表
+     * Obter lista de permissões do cargo
      */
     private List<String> getRolePermissions(GuildMember.Role role) {
         List<String> permissions = new ArrayList<>();
@@ -475,7 +475,7 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 获取权限等级
+     * Obter nível de permissão
      */
     private String getPermissionLevel(GuildMember.Role role) {
         switch (role) {
@@ -489,7 +489,7 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 获取可执行操作
+     * Obter ações executáveis
      */
     private String getExecutableActions(GuildMember.Role role) {
         switch (role) {
@@ -503,7 +503,7 @@ public class MemberDetailsGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

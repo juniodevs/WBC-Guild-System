@@ -12,7 +12,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
- * 玩家事件监听器
+ * Listener de eventos do jogador
  */
 public class PlayerListener implements Listener {
     
@@ -23,24 +23,24 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * 玩家加入服务器事件
+     * Evento de jogador entrando no servidor
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // 检查工会战争状态
+        // Verificar status de guerra da guilda
         checkWarStatus(event.getPlayer());
     }
     
     /**
-     * 检查工会战争状态并发送通知
+     * Verificar status de guerra da guilda e enviar notificações
      */
     private void checkWarStatus(org.bukkit.entity.Player player) {
-        // 异步检查玩家的工会
+        // Verificar guilda do jogador de forma assíncrona
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             if (guild != null) {
-                // 检查工会的所有关系
+                // Verificar todas as relações da guilda
                 plugin.getGuildService().getGuildRelationsAsync(guild.getId()).thenAccept(relations -> {
-                    // 确保在主线程中执行
+                    // Garantir execução na thread principal
                     CompatibleScheduler.runTask(plugin, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
@@ -56,11 +56,11 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * 玩家离开服务器事件
+     * Evento de jogador saindo do servidor
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // 清理玩家的GUI状态
+        // Limpar estado da GUI do jogador
         GUIManager guiManager = plugin.getGuiManager();
         if (guiManager != null) {
             guiManager.closeGUI(event.getPlayer());
@@ -68,17 +68,17 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * 处理聊天输入事件（用于GUI输入模式）
+     * Processar evento de entrada de chat (usado para modo de entrada da GUI)
      */
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         GUIManager guiManager = plugin.getGuiManager();
         
         if (guiManager != null && guiManager.isInInputMode(event.getPlayer())) {
-            // 取消事件，防止消息发送到聊天
+            // Cancelar evento para impedir que a mensagem seja enviada no chat
             event.setCancelled(true);
             
-            // 处理输入 - 在主线程中执行
+            // Processar entrada - executar na thread principal
             String input = event.getMessage();
             CompatibleScheduler.runTask(plugin, () -> {
                 try {
@@ -86,7 +86,7 @@ public class PlayerListener implements Listener {
                 } catch (Exception e) {
                     plugin.getLogger().severe("Erro ao processar entrada da GUI: " + e.getMessage());
                     e.printStackTrace();
-                    // 发生错误时清除输入模式
+                    // Limpar modo de entrada quando ocorrer erro
                     guiManager.clearInputMode(event.getPlayer());
                 }
             });

@@ -38,7 +38,7 @@ public class ServiceContainer {
     public <T> T get(Class<T> serviceClass) {
         T service = (T) services.get(serviceClass);
         if (service == null) {
-            throw new ServiceNotFoundException("服务未找到: " + serviceClass.getName());
+            throw new ServiceNotFoundException("Serviço não encontrado: " + serviceClass.getName());
         }
         return service;
     }

@@ -1,16 +1,17 @@
 package com.guild.core.database;
 
-import com.guild.GuildPlugin;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+
+import org.bukkit.configuration.file.FileConfiguration;
+
+import com.guild.GuildPlugin;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseManager {
     
@@ -40,8 +41,8 @@ public class DatabaseManager {
             logger.info("Conexão com banco de dados inicializada com sucesso: " + databaseType);
             
         } catch (Exception e) {
-            logger.severe("数据库连接初始化失败: " + e.getMessage());
-            throw new RuntimeException("数据库连接失败", e);
+            logger.severe("Falha na inicialização da conexão do banco de dados: " + e.getMessage());
+            throw new RuntimeException("Falha na conexão do banco de dados", e);
         }
     }
     
@@ -117,11 +118,11 @@ public class DatabaseManager {
                 Thread.sleep(1000);
                 checkAndAddMissingColumns();
             } catch (Exception e) {
-                logger.warning("异步检查数据库列时发生错误: " + e.getMessage());
+                logger.warning("Erro ao verificar coluna do banco de dados de forma assíncrona: " + e.getMessage());
             }
         });
         
-        logger.info("数据表创建完成");
+        logger.info("Criação das tabelas concluída");
     }
     
     private void createSQLiteTables() {
@@ -314,7 +315,7 @@ public class DatabaseManager {
     
     public Connection getConnection() throws SQLException {
         if (dataSource == null) {
-            throw new SQLException("数据库连接未初始化");
+            throw new SQLException("Conexão do banco de dados não inicializada");
         }
         return dataSource.getConnection();
     }
@@ -330,8 +331,8 @@ public class DatabaseManager {
             return stmt.executeUpdate();
             
         } catch (SQLException e) {
-            logger.severe("执行更新操作失败: " + e.getMessage());
-            throw new RuntimeException("数据库操作失败", e);
+            logger.severe("Falha ao executar operação de atualização: " + e.getMessage());
+            throw new RuntimeException("Falha na operação do banco de dados", e);
         }
     }
     
@@ -351,15 +352,15 @@ public class DatabaseManager {
             return stmt.executeQuery();
             
         } catch (SQLException e) {
-            logger.severe("执行查询操作失败: " + e.getMessage());
-            throw new RuntimeException("数据库操作失败", e);
+            logger.severe("Falha ao executar operação de consulta: " + e.getMessage());
+            throw new RuntimeException("Falha na operação do banco de dados", e);
         }
     }
     
     public void close() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            logger.info("数据库连接已关闭");
+            logger.info("Conexão do banco de dados fechada");
         }
     }
     
@@ -368,16 +369,12 @@ public class DatabaseManager {
     }
     
     private void checkAndAddMissingColumns() {
-        try {
-            if (databaseType == DatabaseType.SQLITE) {
-                checkAndAddSQLiteColumns();
-            } else {
-                checkAndAddMySQLColumns();
-            }
-            logger.info("数据库列检查完成");
-        } catch (Exception e) {
-            logger.warning("检查数据库列时发生错误: " + e.getMessage());
+        if (databaseType == DatabaseType.SQLITE) {
+            checkAndAddSQLiteColumns();
+        } else {
+            checkAndAddMySQLColumns();
         }
+        logger.info("Verificação de colunas do banco de dados concluída");
     }
     
     private void checkAndAddSQLiteColumns() {
@@ -386,7 +383,7 @@ public class DatabaseManager {
             
             conn.commit(); 
         } catch (SQLException e) {
-            logger.warning("检查SQLite列时发生错误: " + e.getMessage());
+            logger.warning("Erro ao verificar colunas do SQLite: " + e.getMessage());
         }
     }
     
@@ -396,7 +393,7 @@ public class DatabaseManager {
             
             conn.commit(); 
         } catch (SQLException e) {
-            logger.warning("检查MySQL列时发生错误: " + e.getMessage());
+            logger.warning("Erro ao verificar colunas do MySQL: " + e.getMessage());
         }
     }
     
