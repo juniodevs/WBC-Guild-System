@@ -123,9 +123,13 @@ public class GuildInfoGUI implements GUI {
     }
     
     private void setupDefaultItems() {
+        // Status da guilda
+        String status = guild.isFrozen() ? "§cCongelada" : "§aNormal";
+
         // Nome da guilda
         ItemStack nameItem = createItem(Material.NAME_TAG, "§6Nome da Guilda", 
-            "§e" + guild.getName());
+            "§e" + guild.getName(),
+            "§7Status: " + status);
         inventory.setItem(10, nameItem);
         
         // Tag da guilda
@@ -152,7 +156,7 @@ public class GuildInfoGUI implements GUI {
             CompatibleScheduler.runTask(plugin, () -> {
                 ItemStack memberItem = createItem(Material.PLAYER_HEAD, "§6Membros", 
                     "§e" + memberCount + "/" + guild.getMaxMembers() + " pessoas");
-                inventory.setItem(28, memberItem);
+                inventory.setItem(29, memberItem);
             });
         });
         
@@ -160,7 +164,7 @@ public class GuildInfoGUI implements GUI {
         ItemStack levelItem = createItem(Material.EXPERIENCE_BOTTLE, "§6Nível da Guilda", 
             "§eNível " + guild.getLevel(),
             "§7Máx Membros: " + guild.getMaxMembers() + " pessoas");
-        inventory.setItem(30, levelItem);
+        inventory.setItem(31, levelItem);
         
 
         // Data de criação (usar formato de tempo real)
@@ -168,13 +172,7 @@ public class GuildInfoGUI implements GUI {
             ? guild.getCreatedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER)
             : "Desconhecido";
         ItemStack timeItem = createItem(Material.CLOCK, "§6Criada em", "§e" + createdTime);
-        inventory.setItem(34, timeItem);
-        
-        // Status da guilda
-        String status = guild.isFrozen() ? "§cCongelada" : "§aNormal";
-        ItemStack statusItem = createItem(Material.BEACON, "§6Status da Guilda", 
-            status);
-        inventory.setItem(36, statusItem);
+        inventory.setItem(33, timeItem);
         
         // Botão de voltar
         ItemStack backItem = createItem(Material.ARROW, "§cVoltar", 

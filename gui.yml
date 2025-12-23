@@ -33,7 +33,7 @@ main-menu:
       glow: false
     
     guild-settings:
-      slot: 30
+      slot: 29
       material: COMPASS
       name: "&eConfigurações da Guilda"
       lore:
@@ -42,7 +42,7 @@ main-menu:
       glow: false
     
     guild-list:
-      slot: 32
+      slot: 31
       material: BOOKSHELF
       name: "&eLista de Guildas"
       lore:
@@ -51,7 +51,7 @@ main-menu:
       glow: false
     
     guild-relations:
-      slot: 34
+      slot: 33
       material: RED_WOOL
       name: "&eRelações da Guilda"
       lore:
@@ -60,7 +60,7 @@ main-menu:
       glow: false
     
     create-guild:
-      slot: 48
+      slot: 49
       material: EMERALD_BLOCK
       name: "&aCriar Guilda"
       lore:
@@ -80,6 +80,7 @@ guild-info:
       lore:
         - "&f{guild_name}"
         - "&7ID da Guilda: {guild_id}"
+        - "&7Status: {guild_frozen}"
     
     guild-tag:
       slot: 12
@@ -106,7 +107,7 @@ guild-info:
         - "&7O líder tem todas as permissões"
     
     member-count:
-      slot: 28
+      slot: 29
       material: PLAYER_HEAD
       name: "&eQuantidade de Membros"
       lore:
@@ -114,7 +115,7 @@ guild-info:
         - "&7Online: {online_member_count} Pessoas"
     
     guild-level:
-      slot: 30
+      slot: 31
       material: EXPERIENCE_BOTTLE
       name: "&eNível da Guilda"
       lore:
@@ -122,16 +123,8 @@ guild-info:
         - "&7Máx Membros: {guild_max_members} Pessoas"
         - "&7Progresso de Upgrade: {guild_level_progress}"
     
-    guild-status:
-      slot: 32
-      material: BEACON
-      name: "&eStatus da Guilda"
-      lore:
-        - "&f{guild_frozen}"
-        - "&7Status atual da guilda"
-    
     created-date:
-      slot: 34
+      slot: 33
       material: CLOCK
       name: "&eData de Criação"
       lore:
@@ -273,7 +266,7 @@ guild-settings:
         - "&7Atual: {guild_tag}"
     
     permissions:
-      slot: 30
+      slot: 24
       material: SHIELD
       name: "&eConfigurações de Permissão"
       lore:
@@ -293,7 +286,7 @@ guild-list:
   size: 54
   items:
     search:
-      slot: 45
+      slot: 47
       material: COMPASS
       name: "&eBuscar Guilda"
       lore:
@@ -301,7 +294,7 @@ guild-list:
         - "&7Busca atual: {search_query}"
     
     filter:
-      slot: 47
+      slot: 51
       material: HOPPER
       name: "&eFiltrar"
       lore:
@@ -335,7 +328,7 @@ guild-relations:
   size: 54
   items:
     allies:
-      slot: 20
+      slot: 21
       material: GREEN_WOOL
       name: "&aGuildas Aliadas"
       lore:
@@ -343,7 +336,7 @@ guild-relations:
         - "&7Gerenciar relações de aliados"
     
     enemies:
-      slot: 24
+      slot: 23
       material: RED_WOOL
       name: "&cGuildas Inimigas"
       lore:
@@ -351,7 +344,7 @@ guild-relations:
         - "&7Gerenciar relações de inimigos"
     
     war:
-      slot: 28
+      slot: 30
       material: NETHERITE_SWORD
       name: "&4Guildas em Guerra"
       lore:
@@ -557,7 +550,7 @@ admin-gui:
   size: 54
   items:
     guild-list:
-      slot: 20
+      slot: 21
       material: BOOKSHELF
       name: "&eGerenciamento de Lista de Guildas"
       lore:
@@ -568,7 +561,7 @@ admin-gui:
         - "&6Botão do Meio: Congelar/Descongelar"
     
     relations:
-      slot: 24
+      slot: 23
       material: RED_WOOL
       name: "&eGerenciamento de Relações"
       lore:
@@ -578,7 +571,7 @@ admin-gui:
         - "&eBotão Direito: Ver Detalhes"
     
     statistics:
-      slot: 29
+      slot: 30
       material: PAPER
       name: "&eInformações Estatísticas"
       lore:
@@ -587,7 +580,7 @@ admin-gui:
         - "&eClique para ver estatísticas detalhadas"
     
     settings:
-      slot: 31
+      slot: 32
       material: COMPASS
       name: "&eConfigurações do Sistema"
       lore:

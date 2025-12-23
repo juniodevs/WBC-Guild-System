@@ -97,15 +97,6 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(33, guildRelations);
         
-        // Status da Guilda
-        ItemStack guildStatus = createItem(
-            Material.BEACON,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.guild-status.name", "&eStatus da Guilda")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.guild-status.lore.1", "&7Ver status da guilda")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.guild-status.lore.2", "&7Nível, membros, etc."))
-        );
-        inventory.setItem(32, guildStatus);
-        
         // Criar Guilda
         ItemStack createGuild = createItem(
             Material.EMERALD_BLOCK,
@@ -113,7 +104,7 @@ public class MainGuildGUI implements GUI {
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.create-guild.lore.1", "&7Criar uma nova guilda")),
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.items.create-guild.lore.2", "&7Custa moedas"))
         );
-        inventory.setItem(4, createGuild);
+        inventory.setItem(49, createGuild);
     }
     
     @Override
@@ -134,13 +125,10 @@ public class MainGuildGUI implements GUI {
             case 31: // Lista de guildas
                 openGuildListGUI(player);
                 break;
-            case 32: // Status da Guilda
-                openGuildStatusGUI(player);
-                break;
             case 33: // Relações da guilda
                 openGuildRelationsGUI(player);
                 break;
-            case 4: // Criar guilda
+            case 49: // Criar guilda
                 openCreateGuildGUI(player);
                 break;
         }
