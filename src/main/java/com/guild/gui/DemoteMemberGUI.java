@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 降级成员GUI
+ * GUI de Rebaixamento de Membro
  */
 public class DemoteMemberGUI implements GUI {
     
@@ -30,7 +30,7 @@ public class DemoteMemberGUI implements GUI {
     public DemoteMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
-        // 初始化时获取成员列表
+        // Inicializar lista de membros
         this.members = List.of();
         loadMembers();
     }
@@ -39,7 +39,7 @@ public class DemoteMemberGUI implements GUI {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(memberList -> {
             this.members = memberList.stream()
                 .filter(member -> !member.getPlayerUuid().equals(guild.getLeaderUuid()))
-                .filter(member -> member.getRole().equals(GuildMember.Role.OFFICER)) // 只显示官员
+                .filter(member -> member.getRole().equals(GuildMember.Role.OFFICER)) // Mostrar apenas oficiais
                 .collect(java.util.stream.Collectors.toList());
         });
     }
@@ -56,46 +56,46 @@ public class DemoteMemberGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preencher borda
         fillBorder(inventory);
         
-        // 显示成员列表
+        // Exibir lista de membros
         displayMembers(inventory);
         
-        // 添加导航按钮
+        // Adicionar botões de navegação
         setupNavigationButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot >= 9 && slot < 45) {
-            // 成员头像区域
+            // Área de cabeças dos membros
             int memberIndex = slot - 9 + (currentPage * 36);
             if (memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
                 handleDemoteMember(player, member);
             }
         } else if (slot == 45) {
-            // 上一页
+            // Página anterior
             if (currentPage > 0) {
                 currentPage--;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 53) {
-            // 下一页
+            // Próxima página
             int maxPage = (members.size() - 1) / 36;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 49) {
-            // 返回
+            // Voltar
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
         }
     }
     
     /**
-     * 填充边框
+     * Preencher borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -110,7 +110,7 @@ public class DemoteMemberGUI implements GUI {
     }
     
     /**
-     * 显示成员列表
+     * Exibir lista de membros
      */
     private void displayMembers(Inventory inventory) {
         int startIndex = currentPage * 36;
@@ -126,10 +126,10 @@ public class DemoteMemberGUI implements GUI {
     }
     
     /**
-     * 设置导航按钮
+     * Configurar botões de navegação
      */
     private void setupNavigationButtons(Inventory inventory) {
-        // 上一页按钮
+        // Botão de página anterior
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
@@ -139,7 +139,7 @@ public class DemoteMemberGUI implements GUI {
             inventory.setItem(45, prevPage);
         }
         
-        // 下一页按钮
+        // Botão de próxima página
         int maxPage = (members.size() - 1) / 36;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
@@ -150,7 +150,7 @@ public class DemoteMemberGUI implements GUI {
             inventory.setItem(53, nextPage);
         }
         
-        // 返回按钮
+        // Botão de voltar
         ItemStack back = createItem(
             Material.BARRIER,
             ColorUtils.colorize("&cVoltar"),
@@ -160,7 +160,7 @@ public class DemoteMemberGUI implements GUI {
     }
     
     /**
-     * 创建成员头像
+     * Criar cabeça do membro
      */
     private ItemStack createMemberHead(GuildMember member) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -180,24 +180,24 @@ public class DemoteMemberGUI implements GUI {
     }
     
     /**
-     * 处理降级成员
+     * Tratar rebaixamento de membro
      */
     private void handleDemoteMember(Player demoter, GuildMember member) {
-        // 检查权限
+        // Verificar permissão
         if (!demoter.hasPermission("guild.demote")) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cSem permissão");
             demoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
-        // 降级成员
+        // Rebaixar membro
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.MEMBER, demoter.getUniqueId()).thenAccept(success -> {
             if (success) {
                 String demoterMessage = plugin.getConfigManager().getMessagesConfig().getString("demote.success", "&a{player} rebaixado para Membro!")
                     .replace("{player}", member.getPlayerName());
                 demoter.sendMessage(ColorUtils.colorize(demoterMessage));
                 
-                // 通知被降级的玩家
+                // Notificar jogador rebaixado
                 Player demotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (demotedPlayer != null) {
                     String demotedMessage = plugin.getConfigManager().getMessagesConfig().getString("demote.demoted", "&cVocê foi rebaixado para Membro na guilda {guild}!")
@@ -205,7 +205,7 @@ public class DemoteMemberGUI implements GUI {
                     demotedPlayer.sendMessage(ColorUtils.colorize(demotedMessage));
                 }
                 
-                // 刷新GUI
+                // Atualizar GUI
                 plugin.getGuiManager().openGUI(demoter, new DemoteMemberGUI(plugin, guild));
             } else {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("demote.failed", "&cFalha ao rebaixar membro!");
@@ -215,7 +215,7 @@ public class DemoteMemberGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

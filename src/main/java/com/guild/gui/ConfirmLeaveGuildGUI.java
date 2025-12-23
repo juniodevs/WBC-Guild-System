@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 确认离开工会GUI
+ * GUI de confirmação de saída da guilda
  */
 public class ConfirmLeaveGuildGUI implements GUI {
     
@@ -38,30 +38,30 @@ public class ConfirmLeaveGuildGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preencher bordas
         fillBorder(inventory);
         
-        // 显示确认信息
+        // Exibir informações de confirmação
         displayConfirmInfo(inventory);
         
-        // 添加确认和取消按钮
+        // Adicionar botões de confirmação e cancelamento
         setupButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 11: // 确认离开
+            case 11: // Confirmar saída
                 handleConfirmLeave(player);
                 break;
-            case 15: // 取消
+            case 15: // Cancelar
                 handleCancel(player);
                 break;
         }
     }
     
     /**
-     * 填充边框
+     * Preencher bordas
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -76,7 +76,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
     }
     
     /**
-     * 显示确认信息
+     * Exibir informações de confirmação
      */
     private void displayConfirmInfo(Inventory inventory) {
         ItemStack info = createItem(
@@ -90,10 +90,10 @@ public class ConfirmLeaveGuildGUI implements GUI {
     }
     
     /**
-     * 设置按钮
+     * Configurar botões
      */
     private void setupButtons(Inventory inventory) {
-        // 确认离开按钮
+        // Botão de confirmar saída
         ItemStack confirm = createItem(
             Material.REDSTONE_BLOCK,
             ColorUtils.colorize("&cConfirmar Saída"),
@@ -101,7 +101,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
         );
         inventory.setItem(11, confirm);
         
-        // 取消按钮
+        // Botão de cancelar
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
             ColorUtils.colorize("&aCancelar"),
@@ -111,24 +111,24 @@ public class ConfirmLeaveGuildGUI implements GUI {
     }
     
     /**
-     * 处理确认离开
+     * Tratar confirmação de saída
      */
     private void handleConfirmLeave(Player player) {
-        // 检查是否是会长
+        // Verificar se é o líder
         if (player.getUniqueId().equals(guild.getLeaderUuid())) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("leave.leader-cannot-leave", "&cO líder da guilda não pode sair! Transfira a liderança ou exclua a guilda primeiro.");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
-        // 离开工会
+        // Sair da guilda
         plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
             if (success) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("leave.success", "&aVocê saiu da guilda &e{guild}&a com sucesso!")
                     .replace("{guild}", guild.getName());
                 player.sendMessage(ColorUtils.colorize(message));
                 
-                // 关闭GUI
+                // Fechar GUI
                 player.closeInventory();
             } else {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("leave.failed", "&cFalha ao sair da guilda!");
@@ -138,15 +138,15 @@ public class ConfirmLeaveGuildGUI implements GUI {
     }
     
     /**
-     * 处理取消
+     * Tratar cancelamento
      */
     private void handleCancel(Player player) {
-        // 返回工会设置GUI
+        // Voltar para GUI de configurações da guilda
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

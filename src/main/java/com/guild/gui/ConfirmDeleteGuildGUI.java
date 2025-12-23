@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 确认删除工会GUI
+ * GUI de confirmação de exclusão de guilda
  */
 public class ConfirmDeleteGuildGUI implements GUI {
     
@@ -40,30 +40,30 @@ public class ConfirmDeleteGuildGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Preencher bordas
         fillBorder(inventory);
         
-        // 显示确认信息
+        // Exibir informações de confirmação
         displayConfirmInfo(inventory);
         
-        // 添加确认和取消按钮
+        // Adicionar botões de confirmação e cancelamento
         setupButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 11: // 确认删除
+            case 11: // Confirmar exclusão
                 handleConfirmDelete(player);
                 break;
-            case 15: // 取消
+            case 15: // Cancelar
                 handleCancel(player);
                 break;
         }
     }
     
     /**
-     * 填充边框
+     * Preencher bordas
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -78,7 +78,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
     }
     
     /**
-     * 显示确认信息
+     * Exibir informações de confirmação
      */
     private void displayConfirmInfo(Inventory inventory) {
         ItemStack info = createItem(
@@ -94,10 +94,10 @@ public class ConfirmDeleteGuildGUI implements GUI {
     }
     
     /**
-     * 设置按钮
+     * Configurar botões
      */
     private void setupButtons(Inventory inventory) {
-        // 确认删除按钮
+        // Botão de confirmar exclusão
         ItemStack confirm = createItem(
             Material.TNT,
             ColorUtils.colorize("&4Confirmar Exclusão"),
@@ -106,7 +106,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
         );
         inventory.setItem(11, confirm);
         
-        // 取消按钮
+        // Botão de cancelar
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
             ColorUtils.colorize("&aCancelar"),
@@ -116,10 +116,10 @@ public class ConfirmDeleteGuildGUI implements GUI {
     }
     
     /**
-     * 处理确认删除
+     * Tratar confirmação de exclusão
      */
     private void handleConfirmDelete(Player player) {
-        // 检查权限（只有当前工会会长可以删除）
+        // Verificar permissões (apenas o líder da guilda atual pode excluir)
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode realizar esta operação");
@@ -127,15 +127,15 @@ public class ConfirmDeleteGuildGUI implements GUI {
             return;
         }
         
-        // 删除工会
+        // Excluir guilda
         plugin.getGuildService().deleteGuildAsync(guild.getId(), player.getUniqueId()).thenAccept(success -> {
             if (success) {
                 String template = plugin.getConfigManager().getMessagesConfig().getString("delete.success", "&aGuilda &e{guild} &afoi excluída!");
-                // 回到主线程进行界面操作
+                // Voltar para a thread principal para operações de interface
                 CompatibleScheduler.runTask(plugin, () -> {
                     String rendered = ColorUtils.replaceWithColorIsolation(template, "{guild}", guild.getName());
                     player.sendMessage(rendered);
-                    // 使用GUIManager以确保主线程安全关闭与打开
+                    // Usar GUIManager para garantir fechamento e abertura seguros na thread principal
                     plugin.getGuiManager().closeGUI(player);
                     plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
                 });
@@ -147,15 +147,15 @@ public class ConfirmDeleteGuildGUI implements GUI {
     }
     
     /**
-     * 处理取消
+     * Tratar cancelamento
      */
     private void handleCancel(Player player) {
-        // 返回工会设置GUI
+        // Voltar para GUI de configurações da guilda
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

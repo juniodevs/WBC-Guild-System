@@ -139,7 +139,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 加载可用工会列表
+     * Carregar lista de guildas disponíveis
      */
     private CompletableFuture<List<Guild>> loadAvailableGuilds() {
         return plugin.getGuildService().getAllGuildsAsync().thenApply(guilds -> {
@@ -154,7 +154,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 显示关系类型选择
+     * Exibir seleção de tipo de relação
      */
     private void displayRelationTypes(Inventory inventory) {
         GuildRelation.RelationType[] types = GuildRelation.RelationType.values();
@@ -199,7 +199,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 显示目标工会选择
+     * Exibir seleção de guilda alvo
      */
     private void displayTargetGuilds(Inventory inventory) {
         int startIndex = currentPage * itemsPerPage;
@@ -231,7 +231,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 添加功能按钮
+     * Adicionar botões de função
      */
     private void addFunctionButtons(Inventory inventory) {
         // Botão de confirmar criação
@@ -257,7 +257,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 添加分页按钮
+     * Adicionar botões de paginação
      */
     private void addPaginationButtons(Inventory inventory) {
         // Botão de página anterior
@@ -300,7 +300,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 处理关系类型点击
+     * Tratar clique no tipo de relação
      */
     private void handleRelationTypeClick(Player player, int slot) {
         GuildRelation.RelationType[] types = GuildRelation.RelationType.values();
@@ -315,7 +315,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 创建关系
+     * Criar relação
      */
     private void createRelation(Player player) {
         // Encontrar guilda alvo
@@ -371,7 +371,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 获取关系类型对应的材料
+     * Obter material correspondente ao tipo de relação
      */
     private Material getRelationTypeMaterial(GuildRelation.RelationType type) {
         switch (type) {
@@ -385,7 +385,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 刷新库存
+     * Atualizar inventário
      */
     private void refreshInventory(Player player) {
         CreateRelationGUI newGUI = new CreateRelationGUI(plugin, guild, player);
@@ -396,7 +396,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 填充边框
+     * Preencher borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -410,7 +410,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

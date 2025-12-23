@@ -82,7 +82,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 填充边框
+     * Preencher borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -97,10 +97,10 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 设置输入按钮
+     * Configurar botões de entrada
      */
     private void setupInputButtons(Inventory inventory) {
-        // Entrada de nome da guilda按钮
+        // Botão de entrada de nome da guilda
         ItemStack nameInput = createItem(
             Material.NAME_TAG,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("create-guild.items.name-input.name", "&eNome da Guilda")),
@@ -109,7 +109,7 @@ public class CreateGuildGUI implements GUI {
         );
         inventory.setItem(20, nameInput);
         
-        // Entrada de tag da guilda按钮
+        // Botão de entrada de tag da guilda
         ItemStack tagInput = createItem(
             Material.OAK_SIGN,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("create-guild.items.tag-input.name", "&eTag da Guilda")),
@@ -119,7 +119,7 @@ public class CreateGuildGUI implements GUI {
         );
         inventory.setItem(22, tagInput);
         
-        // Entrada de descrição da guilda按钮
+        // Botão de entrada de descrição da guilda
         ItemStack descriptionInput = createItem(
             Material.BOOK,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("create-guild.items.description-input.name", "&eDescrição da Guilda")),
@@ -131,7 +131,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 设置操作按钮
+     * Configurar botões de ação
      */
     private void setupActionButtons(Inventory inventory) {
         // Botão de confirmar criação
@@ -139,7 +139,7 @@ public class CreateGuildGUI implements GUI {
         String confirmLore1 = plugin.getConfigManager().getGuiConfig().getString("create-guild.items.confirm.lore.1", "&7Confirmar criação da guilda");
         String confirmLore3 = plugin.getConfigManager().getGuiConfig().getString("create-guild.items.confirm.lore.3", "&7Criador: {player_name}");
         
-        // 替换变量
+        // Substituir variáveis
         confirmLore3 = confirmLore3.replace("{player_name}", "Jogador Atual");
         
         ItemStack confirm = createItem(
@@ -150,7 +150,7 @@ public class CreateGuildGUI implements GUI {
         );
         inventory.setItem(39, confirm);
         
-        // Cancelar按钮
+        // Botão de cancelar
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("create-guild.items.cancel.name", "&cCancelar")),
@@ -160,7 +160,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 显示当前输入信息
+     * Exibir informações de entrada atuais
      */
     private void displayCurrentInput(Inventory inventory) {
         // Nome atual da guilda
@@ -192,7 +192,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理工会名称输入
+     * Tratar entrada de nome da guilda
      */
     private void handleNameInput(Player player) {
         String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-name", "&aPor favor, digite o nome da guilda no chat (3-20 caracteres):");
@@ -227,7 +227,7 @@ public class CreateGuildGUI implements GUI {
                 successMessage = successMessage.replace("{name}", guildName);
                 player.sendMessage(ColorUtils.colorize(successMessage));
                 
-                // 重新打开GUI显示更新后的内容
+                // Reabrir GUI mostrando conteúdo atualizado
                 plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, guildName, guildTag, guildDescription));
                 return true;
             });
@@ -235,7 +235,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理工会标签输入
+     * Tratar entrada de tag da guilda
      */
     private void handleTagInput(Player player) {
         String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-tag", "&aPor favor, digite a tag da guilda no chat (máx 6 caracteres, opcional):");
@@ -263,7 +263,7 @@ public class CreateGuildGUI implements GUI {
                 successMessage = successMessage.replace("{tag}", guildTag.isEmpty() ? "Nenhuma" : guildTag);
                 player.sendMessage(ColorUtils.colorize(successMessage));
                 
-                // 重新打开GUI显示更新后的内容
+                // Reabrir GUI mostrando conteúdo atualizado
                 plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, guildName, guildTag, guildDescription));
                 return true;
             });
@@ -271,7 +271,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理工会描述输入
+     * Tratar entrada de descrição da guilda
      */
     private void handleDescriptionInput(Player player) {
         String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-description", "&aPor favor, digite a descrição da guilda no chat (máx 100 caracteres, opcional):");
@@ -298,7 +298,7 @@ public class CreateGuildGUI implements GUI {
                 successMessage = successMessage.replace("{description}", guildDescription.isEmpty() ? "Nenhuma" : guildDescription);
                 player.sendMessage(ColorUtils.colorize(successMessage));
                 
-                // 重新打开GUI显示更新后的内容
+                // Reabrir GUI mostrando conteúdo atualizado
                 plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, guildName, guildTag, guildDescription));
                 return true;
             });
@@ -306,10 +306,10 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理确认创建
+     * Tratar confirmação de criação
      */
     private void handleConfirmCreate(Player player) {
-        // 验证输入
+        // Validar entrada
         if (guildName.isEmpty()) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("create.name-required", "&cPor favor, digite o nome da guilda primeiro!");
             player.sendMessage(ColorUtils.colorize(message));
@@ -343,20 +343,20 @@ public class CreateGuildGUI implements GUI {
             return;
         }
         
-        // 创建工会
+        // Criar guilda
         String finalTag = guildTag.isEmpty() ? null : guildTag;
         String finalDescription = guildDescription.isEmpty() ? null : guildDescription;
         
         plugin.getGuildService().createGuildAsync(guildName, finalTag, finalDescription, player.getUniqueId(), player.getName()).thenAccept(success -> {
-            // 确保在主线程中执行GUI操作
+            // Garantir execução de operações GUI na thread principal
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
                     String template = plugin.getConfigManager().getMessagesConfig().getString("create.success", "&aGuilda {name} criada com sucesso!");
-                    // 使用颜色隔离，避免 {name} 的内嵌颜色影响后续文本
+                    // Usar isolamento de cor para evitar que cores embutidas em {name} afetem o texto subsequente
                     String rendered = ColorUtils.replaceWithColorIsolation(template, "{name}", guildName);
                     player.sendMessage(rendered);
                     
-                    // 关闭GUI并返回主界面
+                    // Fechar GUI e voltar ao menu principal
                     plugin.getGuiManager().closeGUI(player);
                     plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
                 } else {
@@ -368,7 +368,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理取消
+     * Tratar cancelamento
      */
     private void handleCancel(Player player) {
         plugin.getGuiManager().closeGUI(player);
@@ -376,7 +376,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 创建物品
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
