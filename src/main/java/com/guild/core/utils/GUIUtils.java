@@ -1,13 +1,14 @@
 package com.guild.core.utils;
 
-import com.guild.GuildPlugin;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import org.bukkit.entity.Player;
+
+import com.guild.GuildPlugin;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * Utilitários de GUI - Processamento unificado de substituição de variáveis e códigos de cores em GUIs
@@ -102,7 +103,7 @@ public class GUIUtils {
                     try {
                         processedLore.add(future.get());
                     } catch (Exception e) {
-                        plugin.getLogger().warning("Erro ao processar lore da GUI: " + e.getMessage());
+                        plugin.getLogger().warning("Erro ao processar descrição da GUI: " + e.getMessage());
                         processedLore.add("&cErro");
                     }
                 }

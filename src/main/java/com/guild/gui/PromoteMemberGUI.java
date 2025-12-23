@@ -1,10 +1,8 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,12 +11,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
- * GUI de Promoção de Membros
+ * GUI de Promoção de Membro
  */
 public class PromoteMemberGUI implements GUI {
     
@@ -30,7 +30,7 @@ public class PromoteMemberGUI implements GUI {
     public PromoteMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
-        // Obtém lista de membros na inicialização
+        // Inicializar obtendo lista de membros
         this.members = List.of();
         loadMembers();
     }
@@ -39,7 +39,7 @@ public class PromoteMemberGUI implements GUI {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(memberList -> {
             this.members = memberList.stream()
                 .filter(member -> !member.getPlayerUuid().equals(guild.getLeaderUuid()))
-                .filter(member -> !member.getRole().equals(GuildMember.Role.OFFICER)) // Mostra apenas membros que podem ser promovidos
+                .filter(member -> !member.getRole().equals(GuildMember.Role.OFFICER)) // Exibir apenas membros que podem ser promovidos
                 .collect(java.util.stream.Collectors.toList());
         });
     }
@@ -56,20 +56,20 @@ public class PromoteMemberGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // Preenche a borda
+        // Preencher borda
         fillBorder(inventory);
         
-        // Mostra lista de membros
+        // Exibir lista de membros
         displayMembers(inventory);
         
-        // Adiciona botões de navegação
+        // Adicionar botões de navegação
         setupNavigationButtons(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot >= 9 && slot < 45) {
-            // Área de cabeças dos membros
+            // Área de avatar de membro
             int memberIndex = slot - 9 + (currentPage * 36);
             if (memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
@@ -95,7 +95,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * Preenche a borda
+     * Preencher borda
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -110,7 +110,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * Mostra lista de membros
+     * Exibir lista de membros
      */
     private void displayMembers(Inventory inventory) {
         int startIndex = currentPage * 36;
@@ -126,7 +126,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * Configura botões de navegação
+     * Configurar botões de navegação
      */
     private void setupNavigationButtons(Inventory inventory) {
         // Botão de página anterior
@@ -160,7 +160,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * Cria cabeça do membro
+     * Criar avatar de membro
      */
     private ItemStack createMemberHead(GuildMember member) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -180,24 +180,24 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * Processa promoção de membro
+     * Processar promoção de membro
      */
     private void handlePromoteMember(Player promoter, GuildMember member) {
-        // Verifica permissão
+        // Verificar permissões
         if (!promoter.hasPermission("guild.promote")) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cPermissão insuficiente");
             promoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
-        // Promove membro
+        // Promover membro
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.OFFICER, promoter.getUniqueId()).thenAccept(success -> {
             if (success) {
                 String promoterMessage = plugin.getConfigManager().getMessagesConfig().getString("promote.success", "&a{player} promovido a Oficial!")
                     .replace("{player}", member.getPlayerName());
                 promoter.sendMessage(ColorUtils.colorize(promoterMessage));
                 
-                // Notifica o jogador promovido
+                // Notificar jogador promovido
                 Player promotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (promotedPlayer != null) {
                     String promotedMessage = plugin.getConfigManager().getMessagesConfig().getString("promote.promoted", "&aVocê foi promovido a Oficial da guilda {guild}!")
@@ -205,7 +205,7 @@ public class PromoteMemberGUI implements GUI {
                     promotedPlayer.sendMessage(ColorUtils.colorize(promotedMessage));
                 }
                 
-                // Atualiza GUI
+                // Atualizar GUI
                 plugin.getGuiManager().openGUI(promoter, new PromoteMemberGUI(plugin, guild));
             } else {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("promote.failed", "&cFalha ao promover membro!");
@@ -215,7 +215,7 @@ public class PromoteMemberGUI implements GUI {
     }
     
     /**
-     * Cria item
+     * Criar item
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);

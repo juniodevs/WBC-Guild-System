@@ -1,7 +1,11 @@
 package com.guild.core.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.gui.GuildNameInputGUI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,13 +15,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
-import java.util.function.Function;
-
+import com.guild.GuildPlugin;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.GuildNameInputGUI;
 
 public class GUIManager implements Listener {
     
@@ -54,7 +54,7 @@ public class GUIManager implements Listener {
             
             openGuis.put(player.getUniqueId(), gui);
             
-            logger.info("Jogador " + player.getName() + " abriu a GUI: " + gui.getClass().getSimpleName());
+            logger.info("Jogador " + player.getName() + " abriu GUI: " + gui.getClass().getSimpleName());
         } catch (Exception e) {
             logger.severe("Erro ao abrir GUI: " + e.getMessage());
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class GUIManager implements Listener {
                     player.closeInventory();
                 }
                 
-                logger.info("Jogador " + player.getName() + " fechou a GUI: " + gui.getClass().getSimpleName());
+                logger.info("Jogador " + player.getName() + " fechou GUI: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
             logger.severe("Erro ao fechar GUI: " + e.getMessage());
@@ -139,10 +139,10 @@ public class GUIManager implements Listener {
                 }
                 
                 gui.onClose(player);
-                logger.info("Jogador " + player.getName() + " fechou a GUI: " + gui.getClass().getSimpleName());
+                logger.info("Jogador " + player.getName() + " fechou GUI: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("Erro ao processar fechamento da GUI: " + e.getMessage());
+            logger.severe("Erro ao processar fechamento de GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -160,7 +160,7 @@ public class GUIManager implements Listener {
                 
                 openGUI(player, gui);
                 
-                logger.info("GUI do jogador " + player.getName() + " atualizada: " + gui.getClass().getSimpleName());
+                logger.info("GUI do jogador " + player.getName() + " foi atualizada: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
             logger.severe("Erro ao atualizar GUI: " + e.getMessage());
@@ -201,7 +201,7 @@ public class GUIManager implements Listener {
         
         try {
             inputModes.put(player.getUniqueId(), inputHandler);
-            logger.info("Jogador " + player.getName() + " entrou no modo de entrada");
+            logger.info("Jogador " + player.getName() + " entrou em modo de entrada");
         } catch (Exception e) {
             logger.severe("Erro ao definir modo de entrada: " + e.getMessage());
             e.printStackTrace();

@@ -1,13 +1,14 @@
 package com.guild.core.utils;
 
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import com.guild.GuildPlugin;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
+
 import org.bukkit.entity.Player;
 
-import java.time.format.DateTimeFormatter;
+import com.guild.GuildPlugin;
 import com.guild.core.time.TimeProvider;
-import java.util.concurrent.CompletableFuture;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * Utilitários de processamento de placeholders
@@ -250,6 +251,46 @@ public class PlaceholderUtils {
         cachedSeparatorEnabled = cfg.getBoolean("display.role-separator.enabled", true);
         cachedSeparatorFollowRoleColor = cfg.getBoolean("display.role-separator.color-per-role", true);
         cachedSeparatorDefaultColor = cfg.getString("display.role-separator.default-color", "&7");
+    }
+    
+    /**
+     * 格式化余额显示
+     */
+    private static String formatBalance(double balance) {
+        if (balance >= 1000000) {
+            return String.format("%.1fM", balance / 1000000);
+        } else if (balance >= 1000) {
+            return String.format("%.1fK", balance / 1000);
+        } else {
+            return String.format("%.2f", balance);
+        }
+    }
+    
+    /**
+     * 获取下一级升级所需金额
+     */
+    private static double getNextLevelRequirement(int currentLevel) {
+        // 基础升级费用，可以根据需要调整公式
+        return 10000 * Math.pow(1.5, currentLevel);
+    }
+    
+    /**
+     * 格式化升级进度显示
+     */
+    private static String formatLevelProgress(double currentBalance, double requiredBalance) {
+        if (requiredBalance <= 0) {
+            return "100%";
+        }
+        double progress = (currentBalance / requiredBalance) * 100;
+        progress = Math.min(progress, 100); // 限制最大为100%
+        return String.format("%.1f%%", progress);
+    }
+    
+    /**
+     * Formata o progresso de nível (sobrecarga para quando não há balance)
+     */
+    private static String formatLevelProgress() {
+        return "0%";
     }
     
 }

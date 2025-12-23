@@ -1,18 +1,17 @@
 package com.guild.listeners;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUIManager;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUIManager;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
- * Listener de Eventos de Jogador
+ * Listener de eventos do jogador
  */
 public class PlayerListener implements Listener {
     
@@ -23,24 +22,24 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * Evento de entrada de jogador no servidor
+     * Evento de jogador entrando no servidor
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // Verifica o status de guerra da guilda
+        // Verificar status de guerra da guilda
         checkWarStatus(event.getPlayer());
     }
     
     /**
-     * Verifica o status de guerra da guilda e envia notificação
+     * Verificar status de guerra da guilda e enviar notificações
      */
     private void checkWarStatus(org.bukkit.entity.Player player) {
-        // Verifica a guilda do jogador assincronamente
+        // Verificar guilda do jogador de forma assíncrona
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             if (guild != null) {
-                // Verifica todas as relações da guilda
+                // Verificar todas as relações da guilda
                 plugin.getGuildService().getGuildRelationsAsync(guild.getId()).thenAccept(relations -> {
-                    // Garante execução na thread principal
+                    // Garantir execução na thread principal
                     CompatibleScheduler.runTask(plugin, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
@@ -56,11 +55,11 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * Evento de saída de jogador do servidor
+     * Evento de jogador saindo do servidor
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // Limpa o estado da GUI do jogador
+        // Limpar estado da GUI do jogador
         GUIManager guiManager = plugin.getGuiManager();
         if (guiManager != null) {
             guiManager.closeGUI(event.getPlayer());
@@ -68,17 +67,17 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * Processa evento de chat (usado para modo de entrada da GUI)
+     * Processar evento de entrada de chat (usado para modo de entrada da GUI)
      */
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         GUIManager guiManager = plugin.getGuiManager();
         
         if (guiManager != null && guiManager.isInInputMode(event.getPlayer())) {
-            // Cancela o evento para evitar envio da mensagem no chat
+            // Cancelar evento para impedir que a mensagem seja enviada no chat
             event.setCancelled(true);
             
-            // Processa a entrada - executa na thread principal
+            // Processar entrada - executar na thread principal
             String input = event.getMessage();
             CompatibleScheduler.runTask(plugin, () -> {
                 try {
@@ -86,7 +85,7 @@ public class PlayerListener implements Listener {
                 } catch (Exception e) {
                     plugin.getLogger().severe("Erro ao processar entrada da GUI: " + e.getMessage());
                     e.printStackTrace();
-                    // Limpa o modo de entrada em caso de erro
+                    // Limpar modo de entrada quando ocorrer erro
                     guiManager.clearInputMode(event.getPlayer());
                 }
             });

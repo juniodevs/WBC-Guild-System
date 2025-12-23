@@ -33,7 +33,7 @@ public class EventBus {
                 try {
                     ((Consumer<T>) listener).accept(event);
                 } catch (Exception e) {
-                    logger.severe("Falha na execução do ouvinte de evento: " + e.getMessage());
+                    logger.severe("Falha na execução do listener de evento: " + e.getMessage());
                 }
             }
         }
@@ -45,7 +45,7 @@ public class EventBus {
     
     public void clear() {
         listeners.clear();
-        logger.info("Limpando todos os ouvintes de eventos");
+        logger.info("Limpar todos os listeners de evento");
     }
     
     public int getListenerCount(Class<?> eventType) {
