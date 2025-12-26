@@ -1,13 +1,7 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.BannerSerializer;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
-import com.guild.models.Guild;
-import com.guild.models.GuildLog;
-import com.guild.models.GuildMember;
+import java.util.Arrays;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -15,7 +9,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.models.Guild;
+import com.guild.models.GuildLog;
+import com.guild.models.GuildMember;
 
 /**
  * GUI de confirmação para definir o banner da guilda

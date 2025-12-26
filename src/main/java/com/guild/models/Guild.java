@@ -2,7 +2,7 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.bukkit.Location;
+
 import org.bukkit.inventory.ItemStack;
 
 /**

@@ -1,16 +1,17 @@
 package com.guild.core.database;
 
-import com.guild.GuildPlugin;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+
+import org.bukkit.configuration.file.FileConfiguration;
+
+import com.guild.GuildPlugin;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseManager {
     
