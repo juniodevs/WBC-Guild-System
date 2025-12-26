@@ -1,15 +1,9 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
-import com.guild.core.utils.GUIUtils;
-import com.guild.core.utils.PlaceholderUtils;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import com.guild.services.GuildService;
-import org.bukkit.Bukkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -18,9 +12,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.GUIUtils;
+import com.guild.core.utils.PlaceholderUtils;
+import com.guild.models.Guild;
 
 /**
  * GUI de Informações da Guilda
@@ -63,15 +61,54 @@ public class GuildInfoGUI implements GUI {
         for (String key : config.getKeys(false)) {
             ConfigurationSection itemConfig = config.getConfigurationSection(key);
             if (itemConfig != null) {
-                setupConfigItem(itemConfig);
+                setupConfigItem(key, itemConfig);
             }
         }
     }
     
-    private void setupConfigItem(ConfigurationSection itemConfig) {
+    private void setupConfigItem(String key, ConfigurationSection itemConfig) {
+        int slot = itemConfig.getInt("slot", 0);
+        
+        // Tratamento especial para o banner da guilda
+        if ("guild-banner".equals(key)) {
+            ItemStack bannerItem;
+            if (guild.getBanner() != null) {
+                bannerItem = guild.getBanner().clone();
+            } else {
+                bannerItem = com.guild.core.utils.BannerSerializer.getDefaultBanner();
+            }
+            
+            ItemMeta bannerMeta = bannerItem.getItemMeta();
+            if (bannerMeta != null) {
+                String name = itemConfig.getString("name", "");
+                if (!name.isEmpty()) {
+                    GUIUtils.processGUIVariablesAsync(name, guild, player, plugin).thenAccept(processedName -> {
+                        CompatibleScheduler.runTask(plugin, () -> {
+                            bannerMeta.setDisplayName(processedName);
+                            
+                            List<String> lore = itemConfig.getStringList("lore");
+                            if (!lore.isEmpty()) {
+                                GUIUtils.processGUILoreAsync(lore, guild, player, plugin).thenAccept(processedLore -> {
+                                    CompatibleScheduler.runTask(plugin, () -> {
+                                        bannerMeta.setLore(processedLore);
+                                        bannerItem.setItemMeta(bannerMeta);
+                                        inventory.setItem(slot, bannerItem);
+                                    });
+                                });
+                            } else {
+                                bannerItem.setItemMeta(bannerMeta);
+                                inventory.setItem(slot, bannerItem);
+                            }
+                        });
+                    });
+                }
+            }
+            return;
+        }
+        
+        // Processamento normal para outros itens
         String materialName = itemConfig.getString("material", "STONE");
         Material material = Material.valueOf(materialName.toUpperCase());
-        int slot = itemConfig.getInt("slot", 0);
         
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
@@ -126,6 +163,23 @@ public class GuildInfoGUI implements GUI {
         // Status da guilda
         String status = guild.isFrozen() ? "§cCongelada" : "§aNormal";
 
+        // Banner da guilda - Slot 4 (centralizado no topo)
+        ItemStack bannerItem;
+        if (guild.getBanner() != null) {
+            bannerItem = guild.getBanner().clone();
+        } else {
+            bannerItem = com.guild.core.utils.BannerSerializer.getDefaultBanner();
+        }
+        ItemMeta bannerMeta = bannerItem.getItemMeta();
+        if (bannerMeta != null) {
+            bannerMeta.setDisplayName(ColorUtils.colorize("§6Estandarte da Guilda"));
+            bannerMeta.setLore(Arrays.asList(
+                ColorUtils.colorize("§7Estandarte da guilda " + guild.getName())
+            ));
+            bannerItem.setItemMeta(bannerMeta);
+        }
+        inventory.setItem(30, bannerItem);
+
         // Nome da guilda
         ItemStack nameItem = createItem(Material.NAME_TAG, "§6Nome da Guilda", 
             "§e" + guild.getName(),
@@ -155,16 +209,11 @@ public class GuildInfoGUI implements GUI {
         plugin.getGuildService().getGuildMemberCountAsync(guild.getId()).thenAccept(memberCount -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 ItemStack memberItem = createItem(Material.PLAYER_HEAD, "§6Membros", 
-                    "§e" + memberCount + "/" + guild.getMaxMembers() + " pessoas");
+                    "§e" + memberCount + "/" + guild.getMaxMembers() + " pessoas",
+                    "§7Nível da Guilda: §e" + guild.getLevel());
                 inventory.setItem(29, memberItem);
             });
         });
-        
-        // Nível da guilda
-        ItemStack levelItem = createItem(Material.EXPERIENCE_BOTTLE, "§6Nível da Guilda", 
-            "§eNível " + guild.getLevel(),
-            "§7Máx Membros: " + guild.getMaxMembers() + " pessoas");
-        inventory.setItem(31, levelItem);
         
 
         // Data de criação (usar formato de tempo real)

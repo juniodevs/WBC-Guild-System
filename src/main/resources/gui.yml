@@ -73,6 +73,13 @@ guild-info:
   title: "&6Informações da Guilda"
   size: 54
   items:
+    guild-banner:
+      slot: 30
+      material: WHITE_BANNER
+      name: "&eEstandarte da Guilda"
+      lore:
+        - "&7Estandarte da guilda {guild_name}"
+    
     guild-name:
       slot: 10
       material: NAME_TAG
@@ -112,15 +119,7 @@ guild-info:
       lore:
         - "&f{member_count}/{guild_max_members} Pessoas"
         - "&7Online: {online_member_count} Pessoas"
-    
-    guild-level:
-      slot: 30
-      material: EXPERIENCE_BOTTLE
-      name: "&eNível da Guilda"
-      lore:
-        - "&fNível {guild_level}"
-        - "&7Máx Membros: {guild_max_members} Pessoas"
-        - "&7Progresso de Upgrade: {guild_level_progress}"
+        - "&7Nível da Guilda: &e{guild_level}"
     
     guild-status:
       slot: 32
@@ -279,6 +278,14 @@ guild-settings:
       lore:
         - "&7Gerenciar permissões de membros"
         - "&7Gerenciamento de permissões de cargo"
+    
+    change-banner:
+      slot: 31
+      material: WHITE_BANNER
+      name: "&eAlterar Estandarte"
+      lore:
+        - "&7Alterar estandarte da guilda"
+        - "&7Atual: &cNenhum"
     
     back:
       slot: 49

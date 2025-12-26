@@ -1,16 +1,17 @@
 package com.guild.core.database;
 
-import com.guild.GuildPlugin;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+
+import org.bukkit.configuration.file.FileConfiguration;
+
+import com.guild.GuildPlugin;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseManager {
     
@@ -136,6 +137,8 @@ public class DatabaseManager {
                 level INTEGER DEFAULT 1,
                 max_members INTEGER DEFAULT 6,
                 frozen INTEGER DEFAULT 0,
+                banner_data TEXT,
+                banner_json TEXT,
                 created_at TEXT DEFAULT (datetime('now','localtime')),
                 updated_at TEXT DEFAULT (datetime('now','localtime'))
             )
@@ -230,6 +233,8 @@ public class DatabaseManager {
                 level INT DEFAULT 1,
                 max_members INT DEFAULT 6,
                 frozen BOOLEAN DEFAULT FALSE,
+                banner_data TEXT,
+                banner_json TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )

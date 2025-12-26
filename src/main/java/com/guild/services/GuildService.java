@@ -1,26 +1,31 @@
 package com.guild.services;
 
-import com.guild.GuildPlugin;
-import com.guild.core.database.DatabaseManager;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import com.guild.models.GuildApplication;
-import com.guild.models.GuildInvitation;
-import com.guild.models.GuildRelation;
-import com.guild.models.GuildLog;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import com.guild.core.time.TimeProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import com.guild.GuildPlugin;
+import com.guild.core.database.DatabaseManager;
+import com.guild.core.time.TimeProvider;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.models.Guild;
+import com.guild.models.GuildApplication;
+import com.guild.models.GuildInvitation;
+import com.guild.models.GuildLog;
+import com.guild.models.GuildMember;
+import com.guild.models.GuildRelation;
 
 public class GuildService {
     
@@ -835,6 +840,24 @@ public class GuildService {
             guild.setFrozen(false);
         }
         
+        try {
+            String bannerData = rs.getString("banner_data");
+            if (bannerData != null && !bannerData.isEmpty()) {
+                guild.setBanner(com.guild.core.utils.BannerSerializer.deserialize(bannerData));
+            }
+        } catch (SQLException e) {
+            // Coluna banner_data pode não existir em bancos antigos
+        }
+        
+        try {
+            String bannerJson = rs.getString("banner_json");
+            if (bannerJson != null && !bannerJson.isEmpty()) {
+                guild.setBannerJson(bannerJson);
+            }
+        } catch (SQLException e) {
+            // Coluna banner_json pode não existir em bancos antigos
+        }
+        
         return guild;
     }
     
@@ -1494,6 +1517,33 @@ public class GuildService {
                  }
              } catch (SQLException e) {
                  logger.severe("Erro ao atualizar descrição da guilda: " + e.getMessage());
+                 return false;
+             }
+         });
+     }
+     
+     /**
+      * Atualizar banner da guilda (Assíncrono)
+      */
+     public CompletableFuture<Boolean> updateGuildBannerAsync(int guildId, org.bukkit.inventory.ItemStack banner) {
+         return CompletableFuture.supplyAsync(() -> {
+             try {
+                 String bannerData = com.guild.core.utils.BannerSerializer.serialize(banner);
+                 String bannerJson = com.guild.core.utils.BannerSerializer.serializeToJson(banner);
+                 String sql = "UPDATE guilds SET banner_data = ?, banner_json = ? WHERE id = ?";
+                 
+                 try (Connection conn = databaseManager.getConnection();
+                      PreparedStatement stmt = conn.prepareStatement(sql)) {
+                     
+                     stmt.setString(1, bannerData);
+                     stmt.setString(2, bannerJson);
+                     stmt.setInt(3, guildId);
+                     
+                     int rowsAffected = stmt.executeUpdate();
+                     return rowsAffected > 0;
+                 }
+             } catch (SQLException e) {
+                 logger.severe("Erro ao atualizar banner da guilda: " + e.getMessage());
                  return false;
              }
          });

@@ -2,7 +2,8 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.bukkit.Location;
+
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Modelo de dados da guilda
@@ -18,6 +19,8 @@ public class Guild {
     private int level;
     private int maxMembers;
     private boolean frozen;
+    private ItemStack banner;
+    private String bannerJson;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -122,6 +125,22 @@ public class Guild {
     
     public void setFrozen(boolean frozen) {
         this.frozen = frozen;
+    }
+    
+    public ItemStack getBanner() {
+        return banner;
+    }
+    
+    public void setBanner(ItemStack banner) {
+        this.banner = banner;
+    }
+    
+    public String getBannerJson() {
+        return bannerJson;
+    }
+    
+    public void setBannerJson(String bannerJson) {
+        this.bannerJson = bannerJson;
     }
     
 

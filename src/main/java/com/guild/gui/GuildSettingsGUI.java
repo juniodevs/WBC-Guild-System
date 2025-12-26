@@ -1,12 +1,8 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import org.bukkit.Bukkit;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,9 +10,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * GUI de Configurações da Guilda
@@ -74,8 +72,11 @@ public class GuildSettingsGUI implements GUI {
         // Alterar Tag
         setItem(inventory, "change-tag", 22, Material.OAK_SIGN, "&eAlterar Tag");
         
+        // Alterar Estandarte
+        setupBannerButton(inventory);
+        
         // Logs
-        setItem(inventory, "guild-logs", 24, Material.PAPER, "&eLogs da Guilda");
+        setItem(inventory, "guild-logs", 31, Material.PAPER, "&eLogs da Guilda");
     }
 
     private void setupPage2(Inventory inventory) {
@@ -143,6 +144,38 @@ public class GuildSettingsGUI implements GUI {
             .replace("{guild_tag}", guild.getTag() != null ? guild.getTag() : "Sem Tag");
     }
     
+    private void setupBannerButton(Inventory inventory) {
+        ItemStack bannerItem;
+        
+        // Se a guilda tem um banner, mostrar o banner atual
+        if (guild.getBanner() != null) {
+            bannerItem = guild.getBanner().clone();
+            ItemMeta meta = bannerItem.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(ColorUtils.colorize("&eAlterar Estandarte"));
+                meta.setLore(Arrays.asList(
+                    ColorUtils.colorize("&7Alterar estandarte da guilda"),
+                    ColorUtils.colorize("&7Atual: &aDefinido")
+                ));
+                bannerItem.setItemMeta(meta);
+            }
+        } else {
+            // Se não tem banner, mostrar um banner branco padrão
+            bannerItem = new ItemStack(Material.WHITE_BANNER);
+            ItemMeta meta = bannerItem.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(ColorUtils.colorize("&eAlterar Estandarte"));
+                meta.setLore(Arrays.asList(
+                    ColorUtils.colorize("&7Alterar estandarte da guilda"),
+                    ColorUtils.colorize("&7Atual: &cNenhum")
+                ));
+                bannerItem.setItemMeta(meta);
+            }
+        }
+        
+        inventory.setItem(24, bannerItem);
+    }
+    
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == 49) { // Back
@@ -155,7 +188,8 @@ public class GuildSettingsGUI implements GUI {
                 case 20: handleChangeName(player); break;
                 case 21: handleChangeDescription(player); break;
                 case 22: handleChangeTag(player); break;
-                case 24: handleGuildLogs(player); break;
+                case 24: handleChangeBanner(player); break;
+                case 31: handleGuildLogs(player); break;
                 case 50: // Next Page
                     plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, 2));
                     break;
@@ -292,6 +326,26 @@ public class GuildSettingsGUI implements GUI {
             return;
         }
         plugin.getGuiManager().openGUI(player, new GuildLogsGUI(plugin, guild, player));
+    }
+    
+    private void handleChangeBanner(Player player) {
+        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
+        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+            player.sendMessage(ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cApenas o líder da guilda pode realizar esta operação")));
+            return;
+        }
+        
+        // Verificar se o jogador está segurando um banner na mão
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        
+        if (!com.guild.core.utils.BannerSerializer.isBanner(itemInHand)) {
+            player.sendMessage(ColorUtils.colorize("&cVocê precisa estar segurando um estandarte na mão para definir como estandarte da guilda!"));
+            player.closeInventory();
+            return;
+        }
+        
+        // Abrir GUI de confirmação
+        plugin.getGuiManager().openGUI(player, new GuildBannerConfirmGUI(plugin, guild, itemInHand));
     }
     
     private void handleLeaveGuild(Player player) {
