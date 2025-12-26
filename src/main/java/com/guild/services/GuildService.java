@@ -835,6 +835,15 @@ public class GuildService {
             guild.setFrozen(false);
         }
         
+        try {
+            String bannerData = rs.getString("banner_data");
+            if (bannerData != null && !bannerData.isEmpty()) {
+                guild.setBanner(com.guild.core.utils.BannerSerializer.deserialize(bannerData));
+            }
+        } catch (SQLException e) {
+            // Coluna banner_data pode não existir em bancos antigos
+        }
+        
         return guild;
     }
     
@@ -1494,6 +1503,31 @@ public class GuildService {
                  }
              } catch (SQLException e) {
                  logger.severe("Erro ao atualizar descrição da guilda: " + e.getMessage());
+                 return false;
+             }
+         });
+     }
+     
+     /**
+      * Atualizar banner da guilda (Assíncrono)
+      */
+     public CompletableFuture<Boolean> updateGuildBannerAsync(int guildId, org.bukkit.inventory.ItemStack banner) {
+         return CompletableFuture.supplyAsync(() -> {
+             try {
+                 String bannerData = com.guild.core.utils.BannerSerializer.serialize(banner);
+                 String sql = "UPDATE guilds SET banner_data = ? WHERE id = ?";
+                 
+                 try (Connection conn = databaseManager.getConnection();
+                      PreparedStatement stmt = conn.prepareStatement(sql)) {
+                     
+                     stmt.setString(1, bannerData);
+                     stmt.setInt(2, guildId);
+                     
+                     int rowsAffected = stmt.executeUpdate();
+                     return rowsAffected > 0;
+                 }
+             } catch (SQLException e) {
+                 logger.severe("Erro ao atualizar banner da guilda: " + e.getMessage());
                  return false;
              }
          });

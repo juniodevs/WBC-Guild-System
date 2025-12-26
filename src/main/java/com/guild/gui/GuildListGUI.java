@@ -288,11 +288,22 @@ public class GuildListGUI implements GUI {
         lore.add(ColorUtils.colorize("&aBotão Esquerdo: Ver Detalhes"));
         lore.add(ColorUtils.colorize("&eBotão Direito: Solicitar Entrada"));
         
-        return createItem(
-            Material.SHIELD,
-            PlaceholderUtils.replaceGuildPlaceholders("&e{guild_name}", guild, null),
-            lore.toArray(new String[0])
-        );
+        // Usar banner da guilda ou banner branco padrão
+        ItemStack bannerItem;
+        if (guild.getBanner() != null) {
+            bannerItem = guild.getBanner().clone();
+        } else {
+            bannerItem = com.guild.core.utils.BannerSerializer.getDefaultBanner();
+        }
+        
+        ItemMeta meta = bannerItem.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(PlaceholderUtils.replaceGuildPlaceholders("&e{guild_name}", guild, null));
+            meta.setLore(lore);
+            bannerItem.setItemMeta(meta);
+        }
+        
+        return bannerItem;
     }
     
     /**
