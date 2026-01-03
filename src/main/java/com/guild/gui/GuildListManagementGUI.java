@@ -89,7 +89,7 @@ public class GuildListManagementGUI implements GUI {
         lore.add(ColorUtils.colorize("&7Status: " + status));
         lore.add("");
         lore.add(ColorUtils.colorize("&eBotão Esquerdo: Ver Detalhes"));
-        lore.add(ColorUtils.colorize("&cBotão Direito: Excluir Guilda"));
+        lore.add(ColorUtils.colorize("&cBotão Direito (ou Q): Excluir Guilda"));
         if (guild.isFrozen()) {
             lore.add(ColorUtils.colorize("&aBotão do Meio: Descongelar Guilda"));
         } else {

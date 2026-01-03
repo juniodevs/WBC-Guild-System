@@ -287,7 +287,7 @@ public class GuildListGUI implements GUI {
         lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7Criada em: {guild_created_time}", guild, null));
         lore.add("");
         lore.add(ColorUtils.colorize("&aBotão Esquerdo: Ver Detalhes"));
-        lore.add(ColorUtils.colorize("&eBotão Direito: Solicitar Entrada"));
+        lore.add(ColorUtils.colorize("&eBotão Direito (ou Q): Solicitar Entrada"));
         
         // Usar banner da guilda ou banner branco padrão
         ItemStack bannerItem;

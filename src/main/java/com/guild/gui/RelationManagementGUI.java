@@ -127,10 +127,10 @@ public class RelationManagementGUI implements GUI {
         if (isPendingDeletion) {
             lore.add(ColorUtils.colorize("&4⚠ Exclusão Pendente"));
             lore.add(ColorUtils.colorize("&cBotão Esquerdo: Confirmar Exclusão"));
-            lore.add(ColorUtils.colorize("&eBotão Direito: Cancelar Exclusão"));
+            lore.add(ColorUtils.colorize("&eBotão Direito (ou Q): Cancelar Exclusão"));
         } else {
             lore.add(ColorUtils.colorize("&cBotão Esquerdo: Excluir Relação"));
-            lore.add(ColorUtils.colorize("&eBotão Direito: Ver Detalhes"));
+            lore.add(ColorUtils.colorize("&eBotão Direito (ou Q): Ver Detalhes"));
         }
         
         String displayName = ColorUtils.colorize("&6" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name());
@@ -345,7 +345,7 @@ public class RelationManagementGUI implements GUI {
         deletionTimers.put(player.getUniqueId(), System.currentTimeMillis());
         
         player.sendMessage(ColorUtils.colorize("&cTem certeza que deseja excluir a relação: " + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name() + "?"));
-        player.sendMessage(ColorUtils.colorize("&cBotão Esquerdo: Confirmar | Botão Direito: Cancelar"));
+        player.sendMessage(ColorUtils.colorize("&cBotão Esquerdo: Confirmar | Botão Direito (ou Q): Cancelar"));
         player.sendMessage(ColorUtils.colorize("&eCancelamento automático em 10 segundos"));
         
         // Atualiza GUI para mostrar estado de exclusão pendente

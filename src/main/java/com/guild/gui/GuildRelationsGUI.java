@@ -179,10 +179,10 @@ public class GuildRelationsGUI implements GUI {
         // Adiciona dicas de operação com base no tipo e status da relação
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
-                lore.add(ColorUtils.colorize("&cBotão Direito: Cancelar Relação"));
+                lore.add(ColorUtils.colorize("&cBotão Direito (ou Q): Cancelar Relação"));
             } else {
                 lore.add(ColorUtils.colorize("&aBotão Esquerdo: Aceitar Relação"));
-                lore.add(ColorUtils.colorize("&cBotão Direito: Rejeitar Relação"));
+                lore.add(ColorUtils.colorize("&cBotão Direito (ou Q): Rejeitar Relação"));
             }
         } else if (status == GuildRelation.RelationStatus.ACTIVE) {
             if (type == GuildRelation.RelationType.TRUCE) {
@@ -190,7 +190,7 @@ public class GuildRelationsGUI implements GUI {
             } else if (type == GuildRelation.RelationType.WAR) {
                 lore.add(ColorUtils.colorize("&eBotão Esquerdo: Propor Trégua"));
             } else {
-                lore.add(ColorUtils.colorize("&cBotão Direito: Excluir Relação"));
+                lore.add(ColorUtils.colorize("&cBotão Direito (ou Q): Excluir Relação"));
             }
         }
         

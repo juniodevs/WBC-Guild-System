@@ -258,7 +258,7 @@ public class ApplicationManagementGUI implements GUI {
                 lore.add(ColorUtils.colorize("&7Mensagem: " + application.getMessage()));
                 lore.add("");
                 lore.add(ColorUtils.colorize("&aBotão Esquerdo: Aceitar"));
-                lore.add(ColorUtils.colorize("&cBotão Direito: Rejeitar"));
+                lore.add(ColorUtils.colorize("&cBotão Direito (ou Q): Rejeitar"));
                 break;
             case APPROVED:
                 material = Material.GREEN_WOOL;

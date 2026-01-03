@@ -238,7 +238,7 @@ public class MemberManagementGUI implements GUI {
         lore.add(ColorUtils.colorize("&aBotão Esquerdo: Ver Detalhes"));
         
         if (member.getRole() != GuildMember.Role.LEADER) {
-            lore.add(ColorUtils.colorize("&cBotão Direito: Expulsar Membro"));
+            lore.add(ColorUtils.colorize("&cBotão Direito (ou Q): Expulsar Membro"));
             lore.add(ColorUtils.colorize("&6Botão do Meio: Promover/Rebaixar"));
         }
         

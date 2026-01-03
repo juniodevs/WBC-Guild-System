@@ -8,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -117,7 +119,16 @@ public class GUIManager implements Listener {
             
             logger.info("Jogador " + player.getName() + " clicou na GUI: " + gui.getClass().getSimpleName() + " Slot: " + slot);
             
-            gui.onClick(player, slot, clickedItem, event.getClick());
+            ClickType clickType = event.getClick();
+            
+            if (clickType.isShiftClick() || 
+                event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY ||
+                clickType == ClickType.DROP || 
+                clickType == ClickType.CONTROL_DROP) {
+                clickType = ClickType.RIGHT;
+            }
+            
+            gui.onClick(player, slot, clickedItem, clickType);
         } catch (Exception e) {
             logger.severe("Erro ao processar clique na GUI: " + e.getMessage());
             e.printStackTrace();
