@@ -190,8 +190,9 @@ public class InviteMemberGUI implements GUI {
                         .replace("{player}", target.getName());
                     inviter.sendMessage(ColorUtils.colorize(inviterMessage));
                     
-                    String targetMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&aVocê recebeu um convite da guilda &e{guild}&a!")
-                        .replace("{guild}", guild.getName());
+                    String targetMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&e{inviter} convidou você para entrar na guilda: {guild}")
+                        .replace("{guild}", guild.getName())
+                        .replace("{inviter}", inviter.getName());
                     target.sendMessage(ColorUtils.colorize(targetMessage));
                 } else {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("invite.failed", "&cFalha ao enviar convite!");
