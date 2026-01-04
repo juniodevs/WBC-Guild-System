@@ -1,11 +1,9 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.PlaceholderUtils;
-import com.guild.models.Guild;
-import com.guild.models.GuildApplication;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,10 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.PlaceholderUtils;
+import com.guild.models.Guild;
+import com.guild.models.GuildApplication;
 
 public class ApplicationManagementGUI implements GUI {
     
@@ -46,8 +46,8 @@ public class ApplicationManagementGUI implements GUI {
         // Preencher bordas
         fillBorder(inventory);
         
-        // Adicionar botões de função
-        setupFunctionButtons(inventory);
+        // Adicionar botões de controle (barra inferior)
+        setupControlButtons(inventory);
         
         // Carregar lista de solicitações
         loadApplications(inventory);
@@ -89,30 +89,20 @@ public class ApplicationManagementGUI implements GUI {
     }
     
     /**
-     * Configurar botões de função
+     * Configurar botões de controle (barra inferior)
      */
-    private void setupFunctionButtons(Inventory inventory) {
-        // Obter quantidade de solicitações pendentes assincronamente
-        plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
-            int pendingCount = applications != null ? applications.size() : 0;
-            
-            // Botão de solicitações pendentes
-            ItemStack pendingApplications = createItem(
-                Material.PAPER,
-                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.pending-applications.name", "&eSolicitações Pendentes")),
-                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.pending-applications.lore.1", "&7Ver solicitações pendentes")),
-                ColorUtils.colorize("&f" + pendingCount + " solicitações")
-            );
-            inventory.setItem(20, pendingApplications);
-        });
+    private void setupControlButtons(Inventory inventory) {
+        // Botão de alternar modo (Pendentes/Histórico)
+        Material toggleMaterial = showingHistory ? Material.BOOK : Material.PAPER;
+        String toggleName = showingHistory ? 
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.show-pending.name", "&eVer Solicitações Pendentes")) :
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.show-history.name", "&eVer Histórico"));
+        String toggleLore = showingHistory ?
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.show-pending.lore.1", "&7Clique para ver solicitações pendentes")) :
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.show-history.lore.1", "&7Clique para ver histórico de solicitações"));
         
-        // Botão de histórico de solicitações
-        ItemStack applicationHistory = createItem(
-            Material.BOOK,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.application-history.name", "&eHistórico de Solicitações")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.items.application-history.lore.1", "&7Ver histórico de solicitações"))
-        );
-        inventory.setItem(24, applicationHistory);
+        ItemStack toggleButton = createItem(toggleMaterial, toggleName, toggleLore);
+        inventory.setItem(48, toggleButton);
         
         // Botão de voltar
         ItemStack back = createItem(
@@ -284,7 +274,7 @@ public class ApplicationManagementGUI implements GUI {
      * Verifica se é um botão de função
      */
     private boolean isFunctionButton(int slot) {
-        return slot == 20 || slot == 24 || slot == 49;
+        return slot == 48 || slot == 49;
     }
     
     /**
@@ -306,13 +296,8 @@ public class ApplicationManagementGUI implements GUI {
      */
     private void handleFunctionButton(Player player, int slot) {
         switch (slot) {
-            case 20: // Solicitações pendentes
-                showingHistory = false;
-                currentPage = 0;
-                refreshInventory(player);
-                break;
-            case 24: // Histórico de solicitações
-                showingHistory = true;
+            case 48: // Alternar entre Pendentes e Histórico
+                showingHistory = !showingHistory;
                 currentPage = 0;
                 refreshInventory(player);
                 break;

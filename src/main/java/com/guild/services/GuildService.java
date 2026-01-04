@@ -231,6 +231,14 @@ public class GuildService {
                                     int affectedRows = stmt.executeUpdate();
                                     if (affectedRows > 0) {
                                         logger.info("Informações da guilda atualizadas com sucesso: " + guild.getName() + " (ID: " + guildId + ")");
+                                        
+                                        // Se a tag foi alterada, atualizar nome de exibição de todos os membros online
+                                        if (tag != null && !tag.equals(guild.getTag())) {
+                                            CompatibleScheduler.runTask(plugin, () -> {
+                                                updateGuildMembersDisplayNames(guildId);
+                                            });
+                                        }
+                                        
                                         return true;
                                     }
                                 }
@@ -284,6 +292,14 @@ public class GuildService {
                         logger.info("Jogador " + playerName + " entrou na guilda (ID: " + guildId + ")");
                         // Atualizar cache de permissões interno
                         try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                        
+                        // Atualizar nome de exibição do jogador
+                        Player onlinePlayer = Bukkit.getPlayer(playerUuid);
+                        if (onlinePlayer != null) {
+                            CompatibleScheduler.runTask(plugin, () -> {
+                                updatePlayerDisplayName(onlinePlayer);
+                            });
+                        }
                         
                         // Registrar log de entrada de membro
                         getGuildByIdAsync(guildId).thenAccept(guild -> {
@@ -357,6 +373,14 @@ public class GuildService {
                                 logger.info("Jogador " + member.getPlayerName() + " saiu da guilda (ID: " + member.getGuildId() + ")");
                                 // Atualizar cache de permissões interno
                                 try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                                
+                                // Atualizar nome de exibição do jogador (remover tag)
+                                Player onlinePlayer = Bukkit.getPlayer(playerUuid);
+                                if (onlinePlayer != null) {
+                                    CompatibleScheduler.runTask(plugin, () -> {
+                                        updatePlayerDisplayName(onlinePlayer);
+                                    });
+                                }
                                 
                                 // Registrar log de saída de membro
                                 getGuildByIdAsync(member.getGuildId()).thenAccept(guild -> {
@@ -2077,5 +2101,39 @@ public class GuildService {
             logger.severe("Exceção ao limpar logs antigos: " + e.getMessage());
             return 0;
         }
+    }
+    
+    /**
+     * Atualiza o nome de exibição do jogador com a tag da guilda
+     */
+    private void updatePlayerDisplayName(Player player) {
+        getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (guild != null) {
+                    // Define o nome de exibição com a tag verde
+                    String displayName = "§a[" + guild.getTag() + "]§r " + player.getName();
+                    player.setDisplayName(displayName);
+                    player.setPlayerListName(displayName);
+                } else {
+                    // Remove a tag se o jogador não estiver em uma guilda
+                    player.setDisplayName(player.getName());
+                    player.setPlayerListName(player.getName());
+                }
+            });
+        });
+    }
+    
+    /**
+     * Atualiza o nome de exibição de todos os membros online de uma guilda
+     */
+    private void updateGuildMembersDisplayNames(int guildId) {
+        getGuildMembersAsync(guildId).thenAccept(members -> {
+            for (GuildMember member : members) {
+                Player player = Bukkit.getPlayer(member.getPlayerUuid());
+                if (player != null && player.isOnline()) {
+                    updatePlayerDisplayName(player);
+                }
+            }
+        });
     }
 }

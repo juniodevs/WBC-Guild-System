@@ -1,14 +1,14 @@
 package com.guild.listeners;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUIManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUIManager;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
@@ -29,6 +29,38 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Verifica o status de guerra da guilda
         checkWarStatus(event.getPlayer());
+        
+        // Atualiza o nome de exibição do jogador com a tag da guilda
+        updatePlayerDisplayName(event.getPlayer());
+    }
+    
+    /**
+     * Atualiza o nome de exibição do jogador com a tag da guilda
+     */
+    private void updatePlayerDisplayName(org.bukkit.entity.Player player) {
+        plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (guild != null) {
+                    // Define o nome de exibição com a tag verde
+                    String displayName = "§a[" + guild.getTag() + "]§r " + player.getName();
+                    player.setDisplayName(displayName);
+                    player.setPlayerListName(displayName);
+                } else {
+                    // Remove a tag se o jogador não estiver em uma guilda
+                    player.setDisplayName(player.getName());
+                    player.setPlayerListName(player.getName());
+                }
+            });
+        });
+    }
+    
+    /**
+     * Atualiza o nome de exibição de todos os jogadores online
+     */
+    public void updateAllPlayerDisplayNames() {
+        for (org.bukkit.entity.Player player : Bukkit.getOnlinePlayers()) {
+            updatePlayerDisplayName(player);
+        }
     }
     
     /**
@@ -88,6 +120,22 @@ public class PlayerListener implements Listener {
                     e.printStackTrace();
                     // Limpa o modo de entrada em caso de erro
                     guiManager.clearInputMode(event.getPlayer());
+                }
+            });
+        } else {
+            // Adiciona tag da guilda no nome do jogador no chat
+            plugin.getGuildService().getPlayerGuildAsync(event.getPlayer().getUniqueId()).thenAccept(guild -> {
+                if (guild != null) {
+                    // Formato do chat: §a[TAG]§r nome: mensagem
+                    String guildTag = "§a[" + guild.getTag() + "]§r ";
+                    
+                    // Substitui o placeholder %1$s (nome do jogador) para incluir a tag
+                    String newFormat = event.getFormat().replace("%1$s", guildTag + "%1$s");
+                    
+                    // Executa na thread principal para modificar o formato
+                    CompatibleScheduler.runTask(plugin, () -> {
+                        event.setFormat(newFormat);
+                    });
                 }
             });
         }
