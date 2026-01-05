@@ -1,9 +1,8 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,10 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.models.Guild;
 
 /**
  * GUI de Convidar Membro
@@ -60,9 +59,23 @@ public class InviteMemberGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        if (slot >= 9 && slot < 45) {
+        int[] validSlots = {10, 11, 12, 13, 14, 15, 16,
+                            19, 20, 21, 22, 23, 24, 25,
+                            28, 29, 30, 31, 32, 33, 34,
+                            37, 38, 39, 40, 41, 42, 43};
+        
+        // Verifica se é um slot válido de jogador
+        int slotIndex = -1;
+        for (int i = 0; i < validSlots.length; i++) {
+            if (validSlots[i] == slot) {
+                slotIndex = i;
+                break;
+            }
+        }
+        
+        if (slotIndex != -1) {
             // Área de cabeças dos jogadores
-            int playerIndex = slot - 9 + (currentPage * 36);
+            int playerIndex = slotIndex + (currentPage * 28);
             if (playerIndex < onlinePlayers.size()) {
                 Player targetPlayer = onlinePlayers.get(playerIndex);
                 handleInvitePlayer(player, targetPlayer);
@@ -75,7 +88,7 @@ public class InviteMemberGUI implements GUI {
             }
         } else if (slot == 53) {
             // Próxima página
-            int maxPage = (onlinePlayers.size() - 1) / 36;
+            int maxPage = (onlinePlayers.size() - 1) / 28;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
@@ -91,10 +104,12 @@ public class InviteMemberGUI implements GUI {
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
+        // Bordas superior e inferior
         for (int i = 0; i < 9; i++) {
             inventory.setItem(i, border);
             inventory.setItem(i + 45, border);
         }
+        // Bordas laterais
         for (int i = 9; i < 45; i += 9) {
             inventory.setItem(i, border);
             inventory.setItem(i + 8, border);
@@ -105,12 +120,18 @@ public class InviteMemberGUI implements GUI {
      * Mostra jogadores online
      */
     private void displayOnlinePlayers(Inventory inventory) {
-        int startIndex = currentPage * 36;
-        int endIndex = Math.min(startIndex + 36, onlinePlayers.size());
+        int startIndex = currentPage * 28;
+        int endIndex = Math.min(startIndex + 28, onlinePlayers.size());
+        
+        int[] validSlots = {10, 11, 12, 13, 14, 15, 16,
+                            19, 20, 21, 22, 23, 24, 25,
+                            28, 29, 30, 31, 32, 33, 34,
+                            37, 38, 39, 40, 41, 42, 43};
         
         for (int i = startIndex; i < endIndex; i++) {
             Player targetPlayer = onlinePlayers.get(i);
-            int slot = 9 + (i - startIndex);
+            int slotIndex = i - startIndex;
+            int slot = validSlots[slotIndex];
             
             ItemStack playerHead = createPlayerHead(targetPlayer);
             inventory.setItem(slot, playerHead);
@@ -132,7 +153,7 @@ public class InviteMemberGUI implements GUI {
         }
         
         // Botão de próxima página
-        int maxPage = (onlinePlayers.size() - 1) / 36;
+        int maxPage = (onlinePlayers.size() - 1) / 28;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
@@ -179,7 +200,7 @@ public class InviteMemberGUI implements GUI {
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("invite.already-in-guild", "&cEste jogador já está em uma guilda!");
-                inviter.sendMessage(ColorUtils.colorize(message));
+                inviter.sendMessage(ColorUtils.colorize(message.replace("{player}", target.getName())));
                 return;
             }
             
@@ -190,10 +211,20 @@ public class InviteMemberGUI implements GUI {
                         .replace("{player}", target.getName());
                     inviter.sendMessage(ColorUtils.colorize(inviterMessage));
                     
-                    String targetMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&e{inviter} convidou você para entrar na guilda: {guild}")
-                        .replace("{guild}", guild.getName())
-                        .replace("{inviter}", inviter.getName());
-                    target.sendMessage(ColorUtils.colorize(targetMessage));
+                    // Mensagens para o jogador convidado
+                    String inviteTitle = plugin.getConfigManager().getMessagesConfig().getString("invite.title", "&6=== Convite de Guilda ===");
+                    target.sendMessage(ColorUtils.colorize(inviteTitle));
+                    
+                    String inviteMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&e{inviter} convidou você para entrar na guilda: {guild}")
+                        .replace("{inviter}", inviter.getName())
+                        .replace("{guild}", guild.getName());
+                    target.sendMessage(ColorUtils.colorize(inviteMessage));
+                    
+                    String acceptMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accept-command", "&eDigite &a/guild accept {inviter} &epara aceitar");
+                    target.sendMessage(ColorUtils.colorize(acceptMessage.replace("{inviter}", inviter.getName())));
+                    
+                    String declineMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.decline-command", "&eDigite &c/guild decline {inviter} &epara recusar");
+                    target.sendMessage(ColorUtils.colorize(declineMessage.replace("{inviter}", inviter.getName())));
                 } else {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("invite.failed", "&cFalha ao enviar convite!");
                     inviter.sendMessage(ColorUtils.colorize(message));

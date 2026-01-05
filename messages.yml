@@ -62,9 +62,11 @@ members:
 # Mensagens de convite
 invite:
   sent: "&aConvite de guilda enviado para {player}!"
-  received: "&e{inviter} convidou você para entrar na guilda: {guild}"
+  received: "&e{inviter} convidou você para entrar na guilda: {guild}."
   accepted: "&aVocê aceitou o convite de {guild}!"
+  accepted-inviter: "&a{player} aceitou seu convite para entrar em {guild}!"
   declined: "&cVocê recusou o convite de {guild}!"
+  declined-inviter: "&c{player} recusou seu convite para entrar em {guild}!"
   expired: "&cO convite da guilda expirou!"
   already-invited: "&c{player} já recebeu um convite!"
   no-permission: "&cVocê não tem permissão para convidar jogadores!"
@@ -73,7 +75,7 @@ invite:
   guild-tag: "&eTag da Guilda: [{tag}]"
   accept-command: "&eDigite &a/guild accept {inviter} &epara aceitar"
   decline-command: "&eDigite &c/guild decline {inviter} &epara recusar"
-  already-in-guild: "&cO jogador {player} já está em outra guilda!"
+  already-in-guild: "&cO jogador {player} já está em uma guilda!"
   cannot-invite-self: "&cVocê não pode convidar a si mesmo!"
 
 # Mensagens de expulsão
