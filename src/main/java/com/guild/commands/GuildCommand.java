@@ -1,22 +1,24 @@
 package com.guild.commands;
-import com.guild.GuildPlugin;
-import com.guild.core.utils.ColorUtils;
-import com.guild.gui.MainGuildGUI;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import com.guild.models.GuildRelation;
-import com.guild.services.GuildService;
-import com.guild.core.utils.CompatibleScheduler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+
+import com.guild.GuildPlugin;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.MainGuildGUI;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
+import com.guild.models.GuildRelation;
+import com.guild.services.GuildService;
 public class GuildCommand implements CommandExecutor, TabCompleter {
     private final GuildPlugin plugin;
     public GuildCommand(GuildPlugin plugin) {
@@ -348,7 +350,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(ColorUtils.colorize(sentMessage.replace("{player}", targetPlayerName)));
                     String inviteTitle = plugin.getConfigManager().getMessagesConfig().getString("invite.title", "&6=== Convite de Guilda ===");
                     targetPlayer.sendMessage(ColorUtils.colorize(inviteTitle));
-                    String inviteMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&e{inviter} convidou você para entrar na guilda: {guild}");
+                    String inviteMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&e{inviter} convidou você para entrar na guilda: {guild}.");
                     targetPlayer.sendMessage(ColorUtils.colorize(inviteMessage
                         .replace("{inviter}", player.getName())
                         .replace("{guild}", guild.getName())));
@@ -356,9 +358,9 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                         String tagMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.guild-tag", "&eTag da Guilda: [{tag}]");
                         targetPlayer.sendMessage(ColorUtils.colorize(tagMessage.replace("{tag}", guild.getTag())));
                     }
-                    String acceptMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accept-command", "&eDigite &a/guild accept {inviter} &e para aceitar");
+                    String acceptMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accept-command", "&eDigite &a/guild accept {inviter} &e para aceitar.");
                     targetPlayer.sendMessage(ColorUtils.colorize(acceptMessage.replace("{inviter}", player.getName())));
-                    String declineMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.decline-command", "&eDigite &c/guild decline {inviter} &e para recusar");
+                    String declineMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.decline-command", "&eDigite &c/guild decline {inviter} &e para recusar.");
                     targetPlayer.sendMessage(ColorUtils.colorize(declineMessage.replace("{inviter}", player.getName())));
                 } else {
                     String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.already-invited", "&c{player} já recebeu um convite!");
@@ -642,16 +644,40 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        boolean success = guildService.processInvitation(player.getUniqueId(), inviter.getUniqueId(), true);
-        if (success) {
-            String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted", "&aVocê aceitou o convite da guilda {guild}!");
-            player.sendMessage(ColorUtils.colorize(successMessage));
-            String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted", "&a{player} aceitou seu convite!");
-            inviter.sendMessage(ColorUtils.colorize(inviterMessage.replace("{player}", player.getName())));
-        } else {
-            String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
-            player.sendMessage(ColorUtils.colorize(failMessage));
-        }
+        
+        // Busca o convite para obter informações da guilda
+        guildService.getPendingInvitationAsync(player.getUniqueId(), inviter.getUniqueId()).thenAccept(invitation -> {
+            if (invitation == null) {
+                String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
+                player.sendMessage(ColorUtils.colorize(failMessage));
+                return;
+            }
+            
+            // Busca a guilda para obter o nome
+            guildService.getGuildByIdAsync(invitation.getGuildId()).thenAccept(guild -> {
+                if (guild == null) {
+                    String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
+                    player.sendMessage(ColorUtils.colorize(failMessage));
+                    return;
+                }
+                
+                boolean success = guildService.processInvitation(player.getUniqueId(), inviter.getUniqueId(), true);
+                if (success) {
+                    // Mensagem para quem aceitou
+                    String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted", "&aVocê aceitou o convite de {guild}!");
+                    player.sendMessage(ColorUtils.colorize(successMessage.replace("{guild}", guild.getName())));
+                    
+                    // Mensagem para quem convidou
+                    String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted-inviter", "&a{player} aceitou seu convite para entrar em {guild}");
+                    inviter.sendMessage(ColorUtils.colorize(inviterMessage
+                        .replace("{player}", player.getName())
+                        .replace("{guild}", guild.getName())));
+                } else {
+                    String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
+                    player.sendMessage(ColorUtils.colorize(failMessage));
+                }
+            });
+        });
     }
     private void handleDecline(Player player, String[] args) {
         if (args.length < 2) {
@@ -672,16 +698,40 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        boolean success = guildService.processInvitation(player.getUniqueId(), inviter.getUniqueId(), false);
-        if (success) {
-            String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined", "&cVocê recusou o convite da guilda {guild}!");
-            player.sendMessage(ColorUtils.colorize(successMessage));
-            String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined", "&c{player} recusou seu convite!");
-            inviter.sendMessage(ColorUtils.colorize(inviterMessage.replace("{player}", player.getName())));
-        } else {
-            String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
-            player.sendMessage(ColorUtils.colorize(failMessage));
-        }
+        
+        // Busca o convite para obter informações da guilda
+        guildService.getPendingInvitationAsync(player.getUniqueId(), inviter.getUniqueId()).thenAccept(invitation -> {
+            if (invitation == null) {
+                String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
+                player.sendMessage(ColorUtils.colorize(failMessage));
+                return;
+            }
+            
+            // Busca a guilda para obter o nome
+            guildService.getGuildByIdAsync(invitation.getGuildId()).thenAccept(guild -> {
+                if (guild == null) {
+                    String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
+                    player.sendMessage(ColorUtils.colorize(failMessage));
+                    return;
+                }
+                
+                boolean success = guildService.processInvitation(player.getUniqueId(), inviter.getUniqueId(), false);
+                if (success) {
+                    // Mensagem para quem recusou
+                    String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined", "&cVocê recusou o convite de {guild}!");
+                    player.sendMessage(ColorUtils.colorize(successMessage.replace("{guild}", guild.getName())));
+                    
+                    // Mensagem para quem convidou
+                    String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined-inviter", "&c{player} recusou seu convite para entrar em {guild}");
+                    inviter.sendMessage(ColorUtils.colorize(inviterMessage
+                        .replace("{player}", player.getName())
+                        .replace("{guild}", guild.getName())));
+                } else {
+                    String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&cO convite da guilda expirou!");
+                    player.sendMessage(ColorUtils.colorize(failMessage));
+                }
+            });
+        });
     }
     private void handleHelp(Player player) {
         String title = plugin.getConfigManager().getMessagesConfig().getString("help.title", "&6=== Ajuda do Sistema de Guildas ===");
